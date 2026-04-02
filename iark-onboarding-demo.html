@@ -1,0 +1,4306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>iARK HK - 开户</title>
+  <style>
+/* ===== CSS Variables ===== */
+:root {
+  --primary: #D4572A;
+  --primary-light: #E8754A;
+  --primary-bg: #FFF5F0;
+  --primary-disabled: rgba(212, 87, 42, 0.35);
+  --bg: #F5F5F5;
+  --white: #FFFFFF;
+  --text-primary: #222222;
+  --text-secondary: #666666;
+  --text-placeholder: #BBBBBB;
+  --text-hint: #999999;
+  --border: #E8E8E8;
+  --border-light: #F0F0F0;
+  --success: #52C41A;
+  --error: #E8642C;
+  --gold-dark: #1A1208;
+  --gold-gradient: linear-gradient(180deg, #2C1E0E 0%, #1A1208 100%);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 -4px 20px rgba(0, 0, 0, 0.12);
+  --radius: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --transition: all 0.3s ease;
+}
+
+/* ===== Reset & Base ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  background: var(--bg);
+  overflow: hidden;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.page.active {
+  display: flex;
+}
+
+/* ===== Header / NavBar ===== */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--white);
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.nav-bar .back-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: 26px;
+  color: var(--text-primary);
+  font-weight: 300;
+  padding: 0;
+}
+
+.nav-bar .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-bar .headphone-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--text-secondary);
+}
+
+/* ===== Progress Bar ===== */
+.progress-bar {
+  height: 3px;
+  background: var(--border-light);
+  flex-shrink: 0;
+}
+
+.progress-bar .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #E84D2A, #E8754A);
+  border-radius: 0 2px 2px 0;
+  transition: width 0.4s ease;
+}
+
+/* ===== Page Content ===== */
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px 20px;
+  padding-bottom: 100px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-title .info-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-hint);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--text-hint);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: var(--text-hint);
+  margin-top: 2px;
+  margin-bottom: 20px;
+}
+
+/* ===== Bottom Buttons ===== */
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  background: var(--white);
+  display: flex;
+  gap: 12px;
+  z-index: 20;
+  flex-shrink: 0;
+}
+
+.btn {
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.btn-primary {
+  flex: 1;
+  background: var(--primary);
+  color: var(--white);
+}
+
+.btn-primary:active {
+  background: #B84A24;
+}
+
+.btn-primary.disabled {
+  background: var(--primary-disabled);
+  pointer-events: none;
+}
+
+.btn-secondary {
+  width: 110px;
+  background: var(--white);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:active {
+  background: var(--bg);
+}
+
+.btn-block {
+  width: 100%;
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+}
+
+/* ===== Identity Cards (Screen 1) ===== */
+.identity-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: var(--transition);
+}
+
+.identity-card.selected {
+  border-color: var(--primary);
+}
+
+.identity-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.identity-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+  background: var(--bg);
+}
+
+.identity-card-text h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.identity-card-text p {
+  font-size: 13px;
+  color: var(--text-hint);
+}
+
+.radio-outer {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.identity-card.selected .radio-outer {
+  border-color: var(--primary);
+}
+
+.radio-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  transition: var(--transition);
+}
+
+.identity-card.selected .radio-inner {
+  background: var(--primary);
+}
+
+/* ===== Form Elements ===== */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-field {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  position: relative;
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form-field-select {
+  padding-right: 40px;
+}
+
+.form-field.focused {
+  border-color: var(--primary);
+}
+
+.form-field .field-label {
+  font-size: 12px;
+  color: var(--text-hint);
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.form-field .field-value {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.form-field .field-placeholder {
+  font-size: 16px;
+  color: var(--text-placeholder);
+}
+
+.form-field .field-arrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-60%) rotate(45deg);
+  width: 9px;
+  height: 9px;
+  border-right: 1.5px solid var(--text-hint);
+  border-bottom: 1.5px solid var(--text-hint);
+  font-size: 0;
+  color: transparent;
+}
+
+.form-field-select {
+  cursor: pointer;
+}
+
+.form-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 500;
+  background: transparent;
+  font-family: inherit;
+}
+
+.form-input::placeholder {
+  color: var(--text-placeholder);
+  font-weight: 400;
+}
+
+.form-hint {
+  font-size: 12px;
+  color: var(--text-hint);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+.form-hint-error {
+  color: var(--error);
+}
+
+/* ===== Checkbox ===== */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.checkbox-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.checkbox-row.checked .checkbox-box {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkbox-box svg {
+  width: 12px;
+  height: 12px;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.checkbox-row.checked .checkbox-box svg {
+  opacity: 1;
+}
+
+.checkbox-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* ===== Bottom Sheet / Modal ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: none;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.bottom-sheet {
+  background: var(--white);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.bottom-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.bottom-sheet-header h3 {
+  font-size: 17px;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+}
+
+.bottom-sheet-close {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+}
+
+.bottom-sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bottom-sheet-search {
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 1;
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+.search-input-wrap .search-icon {
+  color: var(--text-hint);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.search-input-wrap input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.search-input-wrap input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.sheet-section-title {
+  font-size: 13px;
+  color: var(--text-hint);
+  padding: 12px 20px 8px;
+}
+
+.sheet-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.sheet-list-item:active {
+  background: var(--bg);
+}
+
+.sheet-list-item .flag {
+  font-size: 24px;
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sheet-list-item .item-name {
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+.alpha-index {
+  position: absolute;
+  right: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  z-index: 5;
+}
+
+.alpha-index span {
+  font-size: 10px;
+  color: var(--text-hint);
+  padding: 1px 4px;
+  cursor: pointer;
+}
+
+/* ===== Upload Card ===== */
+.upload-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 24px 0 16px;
+}
+
+.upload-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1.5px dashed var(--border);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-card .upload-illustration {
+  width: min(200px, 55vw);
+  height: min(120px, 33vw);
+  background: linear-gradient(135deg, #F0E6DE 0%, #E8D8CC 100%);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.upload-card .upload-illustration .id-card-mock {
+  width: 80%;
+  height: 80%;
+  background: linear-gradient(135deg, #F8E8E0 0%, #FFD6C4 50%, #F8E8E0 100%);
+  border-radius: 6px;
+  position: relative;
+  border: 1px solid rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-card .camera-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 18px;
+  position: absolute;
+  z-index: 2;
+}
+
+.upload-card .upload-label {
+  font-size: 13px;
+  color: var(--text-hint);
+  margin-top: 4px;
+}
+
+.upload-card .uploaded-image {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  border-radius: var(--radius);
+}
+
+.security-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--success);
+}
+
+.security-note .shield-icon {
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+
+/* ===== OCR Form ===== */
+.ocr-error {
+  text-align: center;
+  font-size: 13px;
+  color: var(--error);
+  margin: 8px 0;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 20px 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title .view-example {
+  font-size: 13px;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.name-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.name-row .form-field {
+  flex: 1;
+}
+
+/* ===== Landing Page ===== */
+.landing-header {
+  background: linear-gradient(180deg, #1F160A 0%, #2C1E0E 30%, #241810 60%, #1A1208 100%);
+  padding: 0;
+  position: relative;
+  height: max(180px, 26vh);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.landing-header .skyline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(160, 120, 60, 0.08) 50%, rgba(140, 100, 40, 0.15) 100%);
+}
+
+.landing-header .skyline::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 140px;
+  background:
+    linear-gradient(90deg,
+      transparent 2%,
+      rgba(180,140,80,0.12) 3%, rgba(180,140,80,0.12) 6%, transparent 7%,
+      transparent 10%,
+      rgba(180,140,80,0.15) 11%, rgba(180,140,80,0.15) 14%, transparent 15%,
+      transparent 18%,
+      rgba(180,140,80,0.1) 19%, rgba(180,140,80,0.1) 22%, transparent 23%,
+      transparent 30%,
+      rgba(180,140,80,0.2) 31%, rgba(180,140,80,0.2) 38%, transparent 39%,
+      transparent 42%,
+      rgba(180,140,80,0.08) 43%, rgba(180,140,80,0.08) 46%, transparent 47%,
+      transparent 55%,
+      rgba(180,140,80,0.18) 56%, rgba(180,140,80,0.18) 62%, transparent 63%,
+      transparent 68%,
+      rgba(180,140,80,0.12) 69%, rgba(180,140,80,0.12) 73%, transparent 74%,
+      transparent 78%,
+      rgba(180,140,80,0.15) 79%, rgba(180,140,80,0.15) 85%, transparent 86%,
+      transparent 90%,
+      rgba(180,140,80,0.1) 91%, rgba(180,140,80,0.1) 96%, transparent 97%
+    );
+}
+
+.landing-top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  position: relative;
+  z-index: 2;
+}
+
+.landing-top-bar .lang-btn {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.landing-top-bar .top-icon {
+  font-size: 20px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+}
+
+.landing-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.landing-logo .logo-text {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--white);
+  font-family: 'Georgia', serif;
+  letter-spacing: 2px;
+}
+
+.landing-logo .logo-text span {
+  font-style: italic;
+  color: rgba(255,255,255,0.9);
+}
+
+.landing-card {
+  background: var(--white);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  margin-top: -30px;
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.landing-steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 28px 20px 20px;
+  gap: 0;
+  position: relative;
+}
+
+.landing-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100px;
+  position: relative;
+}
+
+.landing-step .step-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.landing-step .step-label {
+  font-size: 13px;
+  color: var(--text-primary);
+  font-weight: 500;
+  text-align: center;
+}
+
+.landing-step .step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  margin-top: 4px;
+}
+
+.landing-step.active .step-dot {
+  background: var(--text-primary);
+}
+
+.step-connector {
+  width: 40px;
+  height: 1px;
+  background: var(--border);
+  margin-top: 22px;
+}
+
+.landing-tagline {
+  text-align: center;
+  padding: 8px 20px 24px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.landing-tagline::before,
+.landing-tagline::after {
+  content: '✦';
+  color: #C4943D;
+  font-size: 14px;
+  margin: 0 6px;
+}
+
+.landing-features {
+  padding: 0 24px 24px;
+}
+
+.landing-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.landing-feature .feature-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-hint);
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.landing-feature .feature-text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.landing-cta {
+  padding: 16px 40px;
+  text-align: center;
+}
+
+.landing-cta .btn-block {
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+/* ===== New Landing Page ===== */
+.landing-wrapper {
+  flex: 1;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.landing-topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 20px;
+  flex-shrink: 0;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-lang {
+  font-size: 15px;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.topbar-icon {
+  font-size: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.topbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #F0E0D0, #E8D0C0);
+  flex-shrink: 0;
+}
+
+.hero-section {
+  flex: 1;
+  position: relative;
+  padding: 16px 24px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.hero-highlight {
+  color: var(--primary);
+}
+
+.hero-sub {
+  font-size: 15px;
+  color: var(--text-hint);
+  letter-spacing: 2px;
+}
+
+.globe-canvas {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-35%);
+  width: 320px;
+  height: 320px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.stats-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px 12px;
+  flex-shrink: 0;
+}
+
+.stat-col {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-main {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+
+.stat-num {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: 'Georgia', serif;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.stat-unit {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.stock-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-right: 3px;
+  letter-spacing: 0.5px;
+}
+
+.tag-us {
+  background: var(--text-primary);
+  color: var(--white);
+}
+
+.tag-hk {
+  background: var(--primary);
+  color: var(--white);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-hint);
+}
+
+.stat-sep {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.hero-cta {
+  padding: 8px 24px 16px;
+  flex-shrink: 0;
+}
+
+/* ===== Landing (structured) ===== */
+#page-landing .landing-structured {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: linear-gradient(180deg, #fafbff 0%, #ffffff 45%, #fff8f5 100%);
+  position: relative;
+}
+
+.landing-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  padding-top: max(12px, env(safe-area-inset-top));
+  flex-shrink: 0;
+  background: transparent;
+}
+
+.landing-topbar-spacer {
+  width: 1px;
+}
+
+.landing-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.landing-action-slot {
+  position: relative;
+}
+
+.landing-icon-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0;
+}
+
+.landing-icon-btn:active {
+  background: rgba(0,0,0,0.05);
+}
+
+.landing-icon-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.landing-lang-menu {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  min-width: 148px;
+  background: rgba(255,255,255,0.98);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  overflow: hidden;
+  display: none;
+  z-index: 50;
+}
+
+.landing-lang-menu.active {
+  display: block;
+}
+
+.landing-lang-menu .lang-item {
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.landing-lang-menu .lang-item:active {
+  background: rgba(0,0,0,0.04);
+}
+
+.landing-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.landing-hero {
+  text-align: center;
+  padding: 12px 0 8px;
+}
+
+.landing-title {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--text-primary);
+  letter-spacing: 0.5px;
+}
+
+.landing-sub {
+  margin-top: 10px;
+  font-size: 15px;
+  color: var(--text-hint);
+  letter-spacing: 2px;
+}
+
+.landing-globe {
+  display: flex;
+  justify-content: flex-end;
+  margin: -8px 0 0;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.landing-globe-svg {
+  width: min(200px, 55vw);
+  height: auto;
+}
+
+.landing-stats {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 16px 8px;
+}
+
+.landing-stat-col {
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+}
+
+.landing-stat-main {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+.landing-stat-tickers {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.landing-ticker-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
+.landing-ticker-code {
+  letter-spacing: 0.02em;
+}
+
+.landing-stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: Georgia, serif;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.landing-stat-unit {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.landing-stat-label {
+  font-size: 12px;
+  color: var(--text-hint);
+  line-height: 1.4;
+}
+
+.landing-stat-sep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+
+.landing-cta {
+  margin-top: auto;
+  padding-top: 24px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+.btn-landing-primary {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 26px;
+  background: linear-gradient(90deg, #e8642c, #d4572a);
+  color: var(--white);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(212, 87, 42, 0.35);
+}
+
+.btn-landing-primary:active {
+  opacity: 0.95;
+  transform: scale(0.99);
+}
+
+/* ===== Noya AI sheet ===== */
+.noya-sheet-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: rgba(0,0,0,0.45);
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.noya-sheet-overlay.active {
+  display: flex;
+}
+
+.noya-sheet {
+  width: 100%;
+  max-width: 390px;
+  max-height: min(92vh, 780px);
+  background: linear-gradient(180deg, #f5f8ff 0%, #ffffff 28%, #ffffff 100%);
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.15);
+}
+
+.noya-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  flex-shrink: 0;
+}
+
+.noya-sheet-menu {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.noya-menu-bar {
+  display: block;
+  height: 2px;
+  width: 18px;
+  background: var(--text-primary);
+  border-radius: 1px;
+}
+
+.noya-sheet-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.noya-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8d4c8, #c9a89a);
+  flex-shrink: 0;
+}
+
+.noya-brand-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.noya-sheet-close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.noya-sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 20px 16px;
+}
+
+.noya-greeting {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2a6cff;
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.noya-sub {
+  font-size: 14px;
+  color: var(--text-hint);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.noya-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noya-suggest-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  padding: 14px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(42, 108, 255, 0.12);
+  background: rgba(255,255,255,0.9);
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.noya-suggest-arrow {
+  color: #7c3aed;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.noya-mid-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.noya-pill-btn {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-size: 13px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.noya-sheet-footer {
+  flex-shrink: 0;
+  padding: 12px 16px 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  background: var(--white);
+  border-top: 1px solid var(--border-light);
+}
+
+.noya-input-wrap {
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.noya-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--text-placeholder);
+}
+
+.noya-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.noya-disclaimer {
+  font-size: 11px;
+  color: var(--text-hint);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.noya-disclaimer-icon {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+.noya-footer-icons {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+/* Bottom Tab Bar */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 0;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  background: var(--white);
+  border-top: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 12px;
+}
+
+.tab-item .tab-icon {
+  font-size: 22px;
+  color: var(--text-hint);
+}
+
+.tab-item .tab-label {
+  font-size: 11px;
+  color: var(--text-hint);
+}
+
+.tab-item.active .tab-icon {
+  color: var(--primary);
+}
+
+.tab-item.active .tab-label {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ===== Account Type (Screen 5) ===== */
+.account-type-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.account-type-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.checkbox-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  border: 1px solid var(--border-light);
+}
+
+.checkbox-card .card-checkbox {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.checkbox-card.checked .card-checkbox {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.checkbox-card .card-text {
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+/* ===== Tax Info (Screen 6) ===== */
+.tax-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tax-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -6px;
+  margin-bottom: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tax-toggle-box {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.tax-toggle-row.checked .tax-toggle-box {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.tax-toggle-box svg {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: var(--transition);
+}
+
+.tax-toggle-row.checked .tax-toggle-box svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tax-toggle-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.tax-number-section {
+  display: block;
+}
+
+.tax-header-row .no-tax-link {
+  font-size: 13px;
+  color: var(--text-hint);
+  cursor: pointer;
+}
+
+.add-tax-btn {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--text-hint);
+  cursor: pointer;
+  margin-top: 16px;
+  background: var(--white);
+}
+
+.explain-link {
+  font-size: 13px;
+  color: var(--primary);
+  cursor: pointer;
+  position: absolute;
+  right: 16px;
+  top: 12px;
+}
+
+/* ===== Other Info (Screen 9) ===== */
+.question-block {
+  margin-bottom: 24px;
+}
+
+.question-text {
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.radio-group {
+  display: flex;
+  gap: 32px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.radio-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.radio-item.selected .radio-circle {
+  border-color: var(--primary);
+}
+
+.radio-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  transition: var(--transition);
+}
+
+.radio-item.selected .radio-dot {
+  background: var(--primary);
+}
+
+.radio-label {
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+/* ===== Confirmation Page (Screen 11) ===== */
+.confirm-section {
+  margin-bottom: 24px;
+}
+
+.confirm-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.confirm-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.edit-btn {
+  font-size: 13px;
+  color: var(--primary);
+  background: rgba(212, 87, 42, 0.08);
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
+  font-weight: 500;
+}
+
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+}
+
+.confirm-row .label {
+  font-size: 14px;
+  color: var(--text-hint);
+  flex-shrink: 0;
+}
+
+.confirm-row .value {
+  font-size: 14px;
+  color: var(--text-primary);
+  text-align: right;
+  font-weight: 500;
+}
+
+.confirm-divider {
+  height: 1px;
+  background: var(--border-light);
+  margin: 16px 0;
+}
+
+/* ===== Declaration (Screen 12) ===== */
+.declaration-content {
+  font-size: 14px;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+.declaration-content .bold {
+  font-weight: 600;
+}
+
+.declaration-content p {
+  margin-bottom: 12px;
+  text-indent: 0;
+}
+
+/* ===== Signature (Screen 13) ===== */
+.signature-page {
+  background: var(--white);
+}
+
+/* Force landscape layout for signature page inside portrait viewport */
+body.signature-force-landscape {
+  overflow: hidden;
+}
+
+.signature-page {
+  position: relative;
+}
+
+.signature-landscape-rotator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vh;
+  height: 100vw;
+  transform-origin: top left;
+  transform: rotate(90deg) translateY(-100%);
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+.signature-landscape-rotator .nav-bar {
+  flex-shrink: 0;
+}
+
+.signature-landscape-rotator .signature-pad-container {
+  flex: 1;
+  min-height: 0;
+}
+
+.signature-landscape-rotator .signature-bottom {
+  flex-shrink: 0;
+}
+
+.signature-pad-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.signature-canvas-wrap {
+  flex: 1;
+  background: var(--bg);
+  margin: 16px;
+  border-radius: var(--radius);
+  position: relative;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signature-canvas-wrap canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.signature-placeholder {
+  font-size: 15px;
+  color: var(--text-placeholder);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.signature-placeholder.hidden {
+  display: none;
+}
+
+.signature-bottom {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  gap: 12px;
+  background: var(--white);
+  border-top: 1px solid var(--border-light);
+}
+
+.signature-bottom .agreement {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.signature-bottom .agreement a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.signature-bottom .btn-rewrite {
+  width: 70px;
+  height: 40px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.signature-bottom .btn-submit {
+  width: 90px;
+  height: 40px;
+  border-radius: 20px;
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.signature-bottom .btn-submit.disabled {
+  background: var(--primary-disabled);
+  pointer-events: none;
+}
+
+/* ===== Result Pages (Screen 14) ===== */
+.result-page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Gauge (arc progress ring) */
+.gauge-container {
+  position: relative;
+  width: min(220px, 56vw);
+  height: min(220px, 56vw);
+  margin-bottom: 20px;
+  margin-top: 16px;
+}
+
+.gauge-container svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gauge-text {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: min(44px, 11vw);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.gauge-text span {
+  font-size: min(22px, 5.5vw);
+  font-weight: 600;
+}
+
+.result-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.result-subtitle {
+  font-size: 14px;
+  color: var(--text-hint);
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+/* 14.1 Funding Prep Card */
+.funding-prep-card {
+  background: #FEF6F1;
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  width: 100%;
+}
+
+.funding-prep-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+}
+
+.funding-card-icon {
+  font-size: 22px;
+}
+
+.funding-prep-list p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* 14.2 Deposit Cards */
+.deposit-cards {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.deposit-card {
+  flex: 1;
+  border-radius: 12px;
+  min-height: 130px;
+  overflow: hidden;
+  position: relative;
+}
+
+.deposit-card-inner {
+  padding: 20px 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.deposit-card h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+
+.deposit-card-standard {
+  background: #F0F0F0;
+}
+
+.deposit-card-standard .deposit-highlight {
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.deposit-card-premium {
+  background: linear-gradient(160deg, #F0ECDA 0%, #EDE5C8 60%, #E8DFC0 100%);
+}
+
+.deposit-card-premium p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.deposit-cta-wrap {
+  width: 100%;
+  padding: 0 16px;
+  margin-top: 24px;
+  margin-bottom: 28px;
+}
+
+.deposit-cta-btn {
+  height: 48px;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Pro Investor Card */
+.pro-investor-card {
+  background: #F5F2ED;
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.pro-investor-card .pro-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pro-investor-card .pro-icon {
+  color: var(--success);
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.pro-investor-card .pro-text h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.pro-investor-card .pro-text p {
+  font-size: 12px;
+  color: var(--text-hint);
+  line-height: 1.5;
+}
+
+.pro-investor-card .pro-btn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--text-primary);
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ===== Camera Page (Screen 2.5) ===== */
+.camera-page {
+  background: #000;
+}
+
+.camera-viewport {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px;
+}
+
+.camera-viewport .camera-frame {
+  width: 90%;
+  max-width: 360px;
+  aspect-ratio: 1.586;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+  position: relative;
+  background: linear-gradient(135deg, rgba(200, 170, 140, 0.3), rgba(220, 190, 160, 0.2));
+}
+
+.camera-hint {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  writing-mode: vertical-rl;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 2px;
+}
+
+.camera-capture-btn {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: 3px solid var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-capture-btn .inner-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--white);
+}
+
+/* ===== Utility Classes ===== */
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-20 { margin-top: 20px; }
+.mt-24 { margin-top: 24px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-24 { margin-bottom: 24px; }
+.text-center { text-align: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+
+/* ===== Scrollbar ===== */
+.page-content::-webkit-scrollbar,
+.bottom-sheet-body::-webkit-scrollbar {
+  display: none;
+}
+
+/* ===== Landscape Signature ===== */
+.signature-landscape {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 200;
+  background: var(--white);
+  display: none;
+  flex-direction: column;
+}
+
+.signature-landscape.active {
+  display: flex;
+}
+
+.signature-landscape .sig-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.signature-landscape .sig-header .headphone {
+  font-size: 20px;
+  color: var(--text-hint);
+}
+
+.signature-landscape .sig-canvas-area {
+  flex: 1;
+  background: var(--bg);
+  margin: 0 12px;
+  border-radius: var(--radius);
+  position: relative;
+}
+
+.signature-landscape .sig-canvas-area canvas {
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.signature-landscape .sig-bottom-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ===== Page Transitions ===== */
+.page.slide-in-right {
+  animation: slideInRight 0.3s ease forwards;
+}
+
+.page.slide-out-left {
+  animation: slideOutLeft 0.3s ease forwards;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* ===== Responsive: Mobile First ===== */
+
+/* Small phones (< 360px) */
+@media (max-width: 359px) {
+  .page-content {
+    padding: 20px 16px;
+    padding-bottom: 90px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  .bottom-bar {
+    padding: 10px 16px;
+    gap: 10px;
+  }
+
+  .btn {
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .btn-secondary {
+    width: 90px;
+  }
+
+  .identity-card {
+    padding: 16px;
+  }
+
+  .landing-tagline {
+    font-size: 15px;
+  }
+
+  .landing-step .step-label {
+    font-size: 12px;
+  }
+
+  .hero-title {
+    font-size: 28px;
+  }
+
+  .stat-num {
+    font-size: 24px;
+  }
+
+  .globe-canvas {
+    width: 240px;
+    height: 240px;
+    right: -30px;
+  }
+
+  .deposit-cards {
+    gap: 8px;
+  }
+
+  .deposit-card {
+    padding: 16px 12px;
+  }
+
+  .deposit-card h4 {
+    font-size: 14px;
+  }
+
+  .question-text {
+    font-size: 14px;
+  }
+
+  .gauge-container {
+    width: 160px;
+    height: 160px;
+  }
+
+  .gauge-text {
+    font-size: 32px;
+  }
+
+  .gauge-text span {
+    font-size: 16px;
+  }
+
+  .deposit-card h4 {
+    font-size: 13px;
+  }
+
+  .deposit-card-inner {
+    padding: 14px 12px;
+  }
+}
+
+/* Standard phones (360px - 430px) - base styles already cover this */
+
+/* Large phones (> 430px, still mobile) */
+@media (min-width: 431px) and (max-width: 767px) {
+  .page-content {
+    padding: 24px 24px;
+    padding-bottom: 100px;
+  }
+
+  .bottom-bar {
+    padding: 12px 24px;
+  }
+}
+
+/* Tablet and Desktop: constrain to phone-like preview */
+@media (min-width: 768px) {
+  html, body {
+    background: #E8E8E8;
+  }
+
+  #app {
+    max-width: 390px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    box-shadow: 0 0 60px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: calc(100% - 40px);
+  }
+
+  .modal-overlay {
+    max-width: 390px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .signature-landscape {
+    max-width: 390px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* Safe area for notched phones */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .nav-bar {
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+
+  .bottom-bar {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .tab-bar {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .signature-bottom {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Landscape orientation on mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+  .page-content {
+    padding-bottom: 80px;
+  }
+
+  .gauge-container {
+    width: 140px;
+    height: 140px;
+    margin-top: 8px;
+    margin-bottom: 12px;
+  }
+
+  .gauge-text {
+    font-size: 28px;
+  }
+
+  .landing-header {
+    height: 140px;
+  }
+
+  .globe-canvas {
+    width: 200px;
+    height: 200px;
+  }
+
+  .result-page-content {
+    padding-top: 12px;
+  }
+}
+
+</style>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+</head>
+<body>
+<div id="app">
+
+  <!-- ==================== PAGE 0: Landing (structured) ==================== -->
+  <div class="page active" id="page-landing">
+    <div class="landing-structured">
+      <header class="landing-topbar">
+        <div class="landing-topbar-spacer"></div>
+        <div class="landing-topbar-actions">
+          <div class="landing-action-slot">
+            <button type="button" class="landing-icon-btn" id="lang-btn" onclick="toggleLangMenu(event)" aria-label="语言">
+              <svg class="landing-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18M12 3a15 15 0 0 0 0 18M12 3a15 15 0 0 1 0 18"/>
+              </svg>
+            </button>
+            <div class="landing-lang-menu" id="lang-menu">
+              <button type="button" class="lang-item" onclick="setLanguage('zh-Hans')">简体中文</button>
+              <button type="button" class="lang-item" onclick="setLanguage('zh-Hant')">繁体中文</button>
+              <button type="button" class="lang-item" onclick="setLanguage('en')">English</button>
+            </div>
+          </div>
+          <button type="button" class="landing-icon-btn" id="noya-ai-btn" onclick="openNoyaSheet(event)" aria-label="Noya AI">
+            <svg class="landing-icon-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3l1.2 3.6L17 8l-3.8 1.4L12 13l-1.2-3.6L7 8l3.8-1.4L12 3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M5 14l.8 2.4L8 17l-2.2.8L5 20l-.8-2.4L2 17l2.2-.8L5 14z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+              <path d="M17 15l.6 1.8L19 17l-1.4.5L17 19l-.6-1.8L15 17l1.4-.5L17 15z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="landing-body">
+        <div class="landing-hero">
+          <h1 class="landing-title">连接全球的财富世界</h1>
+          <p class="landing-sub">懂金融，更懂华人</p>
+        </div>
+        <div class="landing-globe" aria-hidden="true">
+          <svg class="landing-globe-svg" viewBox="0 0 200 200" fill="none">
+            <circle cx="100" cy="100" r="78" stroke="rgba(212,87,42,0.15)" stroke-width="1"/>
+            <g fill="rgba(212,87,42,0.2)">
+              <circle cx="120" cy="70" r="1.2"/><circle cx="135" cy="95" r="1"/><circle cx="90" cy="110" r="1.3"/>
+              <circle cx="75" cy="85" r="1"/><circle cx="105" cy="130" r="1.1"/><circle cx="140" cy="125" r="1"/>
+            </g>
+          </svg>
+        </div>
+        <div class="landing-stats">
+          <div class="landing-stat-col">
+            <div class="landing-stat-main landing-stat-tickers">
+              <div class="landing-ticker-line"><span class="stock-tag tag-us">US</span><span class="landing-ticker-code">NOAH</span></div>
+              <div class="landing-ticker-line"><span class="stock-tag tag-hk">HK</span><span class="landing-ticker-code">6686</span></div>
+            </div>
+            <div class="landing-stat-label">港美双重上市</div>
+          </div>
+          <div class="landing-stat-sep"></div>
+          <div class="landing-stat-col">
+            <div class="landing-stat-num">4<span class="landing-stat-unit">城</span></div>
+            <div class="landing-stat-label">全球布局</div>
+          </div>
+          <div class="landing-stat-sep"></div>
+          <div class="landing-stat-col">
+            <div class="landing-stat-num">23<span class="landing-stat-unit">年+</span></div>
+            <div class="landing-stat-label">稳健经营</div>
+          </div>
+        </div>
+        <div class="landing-cta">
+          <button type="button" class="btn-landing-primary" id="landing-start" onclick="goToPage('page-identity')">立即开户</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 1: Select Identity ==================== -->
+  <div class="page" id="page-identity">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-landing')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 5%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">选择您的身份信息</h1>
+      <div style="height: 24px"></div>
+
+      <div class="identity-card" data-identity="hk" onclick="selectIdentity(this)">
+        <div class="identity-card-left">
+          <div class="identity-card-icon">🇭🇰</div>
+          <div class="identity-card-text">
+            <h3>香港居民</h3>
+            <p>持有香港永久/非永久居民身份证</p>
+          </div>
+        </div>
+        <div class="radio-outer"><div class="radio-inner"></div></div>
+      </div>
+
+      <div class="identity-card" data-identity="macau" onclick="selectIdentity(this)">
+        <div class="identity-card-left">
+          <div class="identity-card-icon">🇲🇴</div>
+          <div class="identity-card-text">
+            <h3>澳门居民</h3>
+            <p>持有澳门永久/非永久居民身份证</p>
+          </div>
+        </div>
+        <div class="radio-outer"><div class="radio-inner"></div></div>
+      </div>
+
+      <div class="identity-card selected" data-identity="other" onclick="selectIdentity(this)">
+        <div class="identity-card-left">
+          <div class="identity-card-icon">🌍</div>
+          <div class="identity-card-text">
+            <h3>其他国家/地区</h3>
+          </div>
+        </div>
+        <div class="radio-outer"><div class="radio-inner"></div></div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-landing')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-id-verify')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2: Identity Verification ==================== -->
+  <div class="page" id="page-id-verify">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-identity')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 8%"></div></div>
+    <div class="page-content" id="id-verify-content">
+      <h1 class="page-title">身份信息验证</h1>
+      <div style="height: 20px"></div>
+
+      <!-- Country Selector -->
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="openModal('modal-country')">
+          <div class="field-label">证件签发国/地区</div>
+          <div id="country-display" class="field-placeholder">请选择</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <!-- Document Selector -->
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="openDocumentSelector()">
+          <div class="field-label">开户证件</div>
+          <div id="doc-display" class="field-placeholder">请选择</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <!-- Upload Section (hidden initially) -->
+      <div id="upload-section" style="display:none;">
+        <div class="upload-section-title" id="upload-title">上传希腊永久居留卡</div>
+        <div class="upload-card" onclick="simulateCapture()">
+          <div class="upload-illustration">
+            <div class="id-card-mock">
+              <div style="display:flex;align-items:center;gap:10px;width:100%;padding:0 12px;">
+                <div style="width:36px;height:44px;border-radius:4px;background:rgba(0,0,0,0.08);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+                  <svg width="20" height="24" viewBox="0 0 20 24" fill="none"><circle cx="10" cy="8" r="5" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" fill="none"/><path d="M2 22c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
+                  <div style="width:70%;height:5px;background:rgba(0,0,0,0.07);border-radius:3px;"></div>
+                  <div style="width:100%;height:5px;background:rgba(0,0,0,0.05);border-radius:3px;"></div>
+                  <div style="width:85%;height:5px;background:rgba(0,0,0,0.05);border-radius:3px;"></div>
+                  <div style="width:60%;height:5px;background:rgba(0,0,0,0.05);border-radius:3px;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="camera-icon">📷</div>
+          </div>
+          <div class="upload-label" id="upload-label">希腊永久居留卡-人像面</div>
+        </div>
+        <div class="security-note">
+          <span class="shield-icon"><svg width="16" height="18" viewBox="0 0 16 18" fill="none"><path d="M8 1L2 3.5V8c0 3.5 2.5 6.5 6 7.5 3.5-1 6-4 6-7.5V3.5L8 1z" stroke="#52C41A" stroke-width="1.3" fill="rgba(82,196,26,0.1)"/><path d="M5.5 9l2 2 3.5-3.5" stroke="#52C41A" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+          <span>该信息仅限审核部门确认身份</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-identity')">上一步</button>
+      <button class="btn btn-primary disabled" id="id-verify-next" onclick="handleIdVerifyNext()">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2.5: Camera ==================== -->
+  <div class="page camera-page" id="page-camera">
+    <div class="camera-viewport">
+      <div class="camera-hint">拍摄时请避免证件反光</div>
+      <div class="camera-frame"></div>
+      <div class="camera-capture-btn" onclick="capturePhoto()">
+        <div class="inner-circle"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2.6: OCR Results ==================== -->
+  <div class="page" id="page-ocr">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-id-verify')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 10%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">身份信息验证</h1>
+      <div style="height: 16px"></div>
+
+      <div class="form-group">
+        <div class="form-field">
+          <div class="field-label">证件签发国/地区</div>
+          <div id="ocr-country-display" class="field-value">请选择</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-field">
+          <div class="field-label">开户证件</div>
+          <div id="ocr-doc-display" class="field-value">请选择</div>
+        </div>
+      </div>
+
+      <!-- Captured Image Preview -->
+      <div style="margin: 12px 0; border-radius: 12px; overflow: hidden; background: #F0E6DE; height: 140px; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 200px; height: 120px; background: linear-gradient(135deg, #E8D5C5, #F0DDD0); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #999;">
+          证件照片预览
+        </div>
+      </div>
+      <div class="security-note" style="margin-bottom: 4px;">
+        <span class="shield-icon"><svg width="16" height="18" viewBox="0 0 16 18" fill="none"><path d="M8 1L2 3.5V8c0 3.5 2.5 6.5 6 7.5 3.5-1 6-4 6-7.5V3.5L8 1z" stroke="#52C41A" stroke-width="1.3" fill="rgba(82,196,26,0.1)"/><path d="M5.5 9l2 2 3.5-3.5" stroke="#52C41A" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+        <span>该信息仅限审核部门确认身份</span>
+      </div>
+      <div class="ocr-error">增加OCR识别失败的提示</div>
+
+      <!-- Name -->
+      <div class="section-title">姓名</div>
+      <div class="name-row">
+        <div class="form-field">
+          <div class="field-label">姓</div>
+          <input class="form-input" value="王" />
+        </div>
+        <div class="form-field">
+          <div class="field-label">名</div>
+          <input class="form-input" value="超" />
+        </div>
+      </div>
+      <div class="name-row">
+        <div class="form-field">
+          <div class="field-label">Last Name</div>
+          <input class="form-input" value="CHAO" />
+        </div>
+        <div class="form-field">
+          <div class="field-label">First Name</div>
+          <input class="form-input" value="WANG" />
+        </div>
+      </div>
+
+      <!-- Document Info -->
+      <div class="section-title">
+        <span id="ocr-doc-title">请选择</span>
+        <span class="view-example">查看示例</span>
+      </div>
+      <div class="form-group">
+        <div class="form-field">
+          <div class="field-label">证件号码</div>
+          <input class="form-input" value="GR293810219" />
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-field form-field-select">
+          <div class="field-label">证件有效期</div>
+          <div class="field-value">2029-01-01</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <!-- Other Info -->
+      <div class="section-title">其他信息</div>
+      <div class="form-group">
+        <div class="form-field form-field-select">
+          <div class="field-label">出生日期</div>
+          <div class="field-value">1990-01-01</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-field form-field-select">
+          <div class="field-label">性别</div>
+          <div class="field-value">男</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-id-verify')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-bank')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 3: Residential Address ==================== -->
+  <div class="page" id="page-address">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-account-type')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 48%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">居住地址 <span class="info-icon">i</span></h1>
+      <div style="height: 20px"></div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="selectAddressCountry()">
+          <div class="field-label">国家/地区</div>
+          <div id="address-country" class="field-value">中国香港</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field">
+          <div class="field-label">详细地址</div>
+          <input class="form-input" id="address-detail" placeholder="请填写" value="新界沙田区玖珑山13号楼6单元1201室" />
+        </div>
+        <div class="form-hint">请填写一个居住地址，需要具体到xx号楼xx单元xx室，如 浅水湾1号楼1203室</div>
+      </div>
+
+      <div class="checkbox-row checked" onclick="toggleCheckbox(this)">
+        <div class="checkbox-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checkbox-label">邮寄地址与居住地址相同</span>
+      </div>
+
+      <div class="checkbox-row checked" onclick="toggleCheckbox(this)">
+        <div class="checkbox-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checkbox-label">出生地址与居住地址相同</span>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-account-type')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-financial')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 4: Personal Info ==================== -->
+  <div class="page" id="page-personal">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-bank')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 55%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">个人信息</h1>
+      <div style="height: 20px"></div>
+
+      <div class="form-group">
+        <div class="form-field">
+          <div class="field-label">Email 邮箱</div>
+          <input class="form-input" id="email-input" placeholder="请填写" value="chenccccc@gmail.com" />
+        </div>
+      </div>
+
+      <div class="checkbox-row checked" onclick="toggleCheckbox(this)" style="margin-top: -8px; margin-bottom: 12px;">
+        <div class="checkbox-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checkbox-label">通过此邮箱接收对账单 (请注意填写正确)</span>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','高等教育','中学教育','小学教育'])">
+          <div class="field-label">教育程度</div>
+          <div class="field-value">高等教育</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','全职','兼职','自雇','退休','学生','待业'])">
+          <div class="field-label">就业状况</div>
+          <div class="field-value">全职</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field">
+          <div class="field-label">公司全称</div>
+          <input class="form-input" value="上海可鱼科技有限公司" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','通讯、商业服务','金融服务','科技','制造业','零售业'])">
+          <div class="field-label">业务性质（可多选）</div>
+          <div class="field-value">通讯、商业服务</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','是','否'])">
+          <div class="field-label">您是否为任何（上市）公司的高管、董事或控股股东？</div>
+          <div class="field-value">否</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','薪金','投资收益','经营收入','遗产/赠与','其他'])">
+          <div class="field-label">资金来源</div>
+          <div class="field-value">薪金</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-hint" style="margin-top: 0;">仅用于投资风险能力评估，不做任何背调核查</div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-bank')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-account-type')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 5: Account Type ==================== -->
+  <div class="page" id="page-account-type">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-personal')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 40%"></div></div>
+    <div class="page-content">
+      <h1 class="account-type-title">您即将开通的是理财账户+证券账户</h1>
+      <p class="account-type-subtitle">请问您是否</p>
+
+      <div class="checkbox-card" onclick="toggleCheckboxCard(this)">
+        <span class="card-text">开通证券融资交易功能</span>
+        <div class="card-checkbox">
+          <svg viewBox="0 0 12 12" fill="none" width="14" height="14"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-personal')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-address')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 6: Tax Info ==================== -->
+  <div class="page" id="page-tax">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-investment')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 79%"></div></div>
+    <div class="page-content">
+      <div class="tax-header-row">
+        <h1 class="page-title">税务信息 <span class="info-icon">i</span></h1>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','希腊','中国内地','中国香港','新加坡','美国'])">
+          <div class="field-label">税务管辖区（CRS & W-8BEN）</div>
+          <div class="field-value">中国香港</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <!-- Tax number provide toggle -->
+      <div id="tax-provide-toggle" class="tax-toggle-row checked" onclick="toggleTaxNumber(this)">
+        <div class="tax-toggle-box">
+          <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+            <path d="M1.2 4.7l2.4 2.4 7.2-7.2" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span id="tax-provide-label" class="tax-toggle-label">可以提供税务编码</span>
+      </div>
+
+      <div class="form-group">
+        <div id="tax-number-section" class="tax-number-section">
+          <div class="form-field" style="position:relative;">
+            <div class="field-label">税务编码</div>
+            <input class="form-input" id="tax-number-input" value="293810219" />
+            <span class="explain-link">解释说明</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="tax-add-wrap" class="add-tax-btn">+ 添加税务信息</div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-investment')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-other-info')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 7: Financial Status ==================== -->
+  <div class="page" id="page-financial">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-address')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 70%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">财务状况</h1>
+      <div style="height: 20px"></div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','成长','收入','保值','投机'])">
+          <div class="field-label">投资目标</div>
+          <div class="field-value">成长</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','< 10万港元','10万 ~ 50万港元','50万 ~ 100万港元','100万 ~ 350万港元','> 350万港元'])">
+          <div class="field-label">可支配年度收入</div>
+          <div class="field-value">> 350万港元</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','< 50万港元','50万 ~ 200万港元','200万 ~ 500万港元','500万 ~ 800万港元','> 800万港元'])">
+          <div class="field-label">流动资产总值</div>
+          <div class="field-value">500万 ~ 800万港元</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-address')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-investment')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 8: Investment Experience ==================== -->
+  <div class="page" id="page-investment">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-financial')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 76%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">投资经验 <span class="info-icon">i</span></h1>
+      <div style="height: 20px"></div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">债券</div>
+          <div class="field-value">一至三年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">外汇</div>
+          <div class="field-value">少于一年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">证券</div>
+          <div class="field-value">一至三年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">衍生性产品</div>
+          <div class="field-value">少于一年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">贵金属</div>
+          <div class="field-value">少于一年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">结构性产品</div>
+          <div class="field-value">一至三年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">基金</div>
+          <div class="field-value">一至三年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','无经验','少于一年','一至三年','五年以上'])">
+          <div class="field-label">虚拟资产</div>
+          <div class="field-value">少于一年</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-financial')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-tax')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 9: Other Info ==================== -->
+  <div class="page" id="page-other-info">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-tax')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 82%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">其他资料披露 <span class="info-icon">i</span></h1>
+      <div style="height: 20px"></div>
+
+      <div class="question-block">
+        <div class="question-text">您是否为联合交易所参与者或者证监会的持牌人或注册人的董事、雇员或认可人士？</div>
+        <div class="radio-group">
+          <div class="radio-item" onclick="selectRadio(this)">
+            <div class="radio-circle"><div class="radio-dot"></div></div>
+            <span class="radio-label">是</span>
+          </div>
+          <div class="radio-item selected" onclick="selectRadio(this)">
+            <div class="radio-circle"><div class="radio-dot"></div></div>
+            <span class="radio-label">否</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-text">您是否和Ark HK或其关联公司的董事或雇员有关关系？</div>
+        <div class="radio-group">
+          <div class="radio-item" onclick="selectRadio(this)">
+            <div class="radio-circle"><div class="radio-dot"></div></div>
+            <span class="radio-label">是</span>
+          </div>
+          <div class="radio-item selected" onclick="selectRadio(this)">
+            <div class="radio-circle"><div class="radio-dot"></div></div>
+            <span class="radio-label">否</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-text">您或您的直系亲属是否担任重要公职，例如重要政客或高级政府官员、司法军事官员、国有企业高级行政人员或其家人或有密切联络人士？</div>
+        <div class="radio-group">
+          <div class="radio-item" onclick="selectRadio(this)">
+            <div class="radio-circle"><div class="radio-dot"></div></div>
+            <span class="radio-label">是</span>
+          </div>
+          <div class="radio-item selected" onclick="selectRadio(this)">
+            <div class="radio-circle"><div class="radio-dot"></div></div>
+            <span class="radio-label">否</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-tax')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-confirm')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 10: Bank Account Info ==================== -->
+  <div class="page" id="page-bank">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-ocr')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 25%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">银行账户信息 <span class="info-icon">i</span></h1>
+      <div style="height: 20px"></div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','中国香港','中国内地','新加坡','美国'])">
+          <div class="field-label">银行所在国家/地区</div>
+          <div class="field-value">中国香港</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['请选择','003 渣打银行(香港)','004 汇丰银行','012 中国银行(香港)','016 恒生银行','024 花旗银行'])">
+          <div class="field-label">银行名称</div>
+          <div class="field-value">003 渣打银行(香港)</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select">
+          <div class="field-label">银行户名 <span style="font-size:11px; color:#999; margin-left:2px;">ⓘ</span></div>
+          <div class="field-value">WANG CHAO</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field">
+          <div class="field-label">银行账户号码 <span style="font-size:11px; color:#999; margin-left:2px;">ⓘ</span></div>
+          <input class="form-input" value="003 9821 4756 0" placeholder="请填写" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-field form-field-select" onclick="cycleSelect(this, ['全部币种','港元','美元','人民币'])">
+          <div class="field-label">支持币种</div>
+          <div class="field-value">全部币种</div>
+          <div class="field-arrow"></div>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-ocr')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-personal')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 11: Info Confirmation ==================== -->
+  <div class="page" id="page-confirm">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-other-info')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 88%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">信息确认 <span class="info-icon">i</span></h1>
+      <div style="height: 20px"></div>
+
+      <!-- Identity Section -->
+      <div class="confirm-section">
+        <div class="confirm-section-header">
+          <span class="confirm-section-title">身份信息</span>
+          <button class="edit-btn" onclick="goToPage('page-id-verify')">修改</button>
+        </div>
+        <div class="confirm-row">
+          <span class="label">居民身份所属国家/地区</span>
+          <span class="value">香港</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">开户证件</span>
+          <span class="value">香港身份证</span>
+        </div>
+      </div>
+
+      <div class="confirm-divider"></div>
+
+      <!-- Document Info -->
+      <div class="confirm-section">
+        <div class="confirm-section-header">
+          <span class="confirm-section-title">证件信息</span>
+          <button class="edit-btn" onclick="goToPage('page-ocr')">修改</button>
+        </div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">姓名</div>
+        <div class="confirm-row">
+          <span class="label">中文姓名</span>
+          <span class="value">王 超</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">英文姓名</span>
+          <span class="value">WANG CHAO</span>
+        </div>
+        <div style="height:12px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">希腊永久居留卡</div>
+        <div class="confirm-row">
+          <span class="label">证件号码</span>
+          <span class="value">GR293810219</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">证件有效期</span>
+          <span class="value">2029-01-01</span>
+        </div>
+        <div style="height:12px;"></div>
+        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">其他信息</div>
+        <div class="confirm-row">
+          <span class="label">出生日期</span>
+          <span class="value">1990-01-01</span>
+        </div>
+        <div class="confirm-row">
+          <span class="label">性别</span>
+          <span class="value">男</span>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-other-info')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-declaration')">确认并下一步</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 12: Declaration ==================== -->
+  <div class="page" id="page-declaration">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-confirm')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width: 94%"></div></div>
+    <div class="page-content">
+      <h1 class="page-title">声明 <span class="info-icon">i</span></h1>
+      <div style="height: 20px"></div>
+
+      <div class="checkbox-row checked" onclick="toggleCheckbox(this)" style="margin-bottom: 16px;">
+        <div class="checkbox-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="checkbox-label" style="font-weight:600;">本人确认：</span>
+      </div>
+
+      <div class="declaration-content">
+        <p>1）本人确认在开户文件录入的电子签名为真实意愿的表示。本人理解、确认并同意受上述开户文件、所附条款及任何所附文件的约束；</p>
+        <p>2）我已阅读并同意所附条款中个人资料收集声明，并同意 Ark HK 可按该声明目的或《隐私条例》允许的其他用途，使用我提供的所有个人信息；</p>
+        <p>3）我同意授权 Ark HK 依法向联交所及证监会传输个人资料，以符合香港投资者识别码及汇报制度要求。</p>
+      </div>
+    </div>
+    <div class="bottom-bar">
+      <button class="btn btn-secondary" onclick="goToPage('page-confirm')">上一步</button>
+      <button class="btn btn-primary" onclick="goToPage('page-signature')">签署开户文件</button>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 13: Signature ==================== -->
+  <div class="page signature-page" id="page-signature">
+    <div class="signature-landscape-rotator">
+      <div class="nav-bar" style="padding: 8px 12px;">
+        <button class="back-btn" onclick="goToPage('page-declaration')" style="transform: rotate(-90deg); font-size: 24px;">‹</button>
+        <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+      </div>
+      <div class="signature-pad-container">
+        <div class="signature-canvas-wrap">
+          <canvas id="signatureCanvas"></canvas>
+          <div class="signature-placeholder" id="sig-placeholder">✏ 请在此签写您的中文名</div>
+        </div>
+      </div>
+      <div class="signature-bottom">
+        <div class="agreement">
+          <div class="checkbox-box" id="sig-agree-box" onclick="toggleSigAgree()" style="width:18px;height:18px;min-width:18px;border-radius:3px;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+            <svg viewBox="0 0 12 12" fill="none" width="10" height="10"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span>本人已阅读<a href="#">开户文件</a>，理解并同意电子签名等同于本人的手写签名</span>
+        </div>
+        <button class="btn-rewrite" onclick="clearSignature()">重写</button>
+        <button class="btn-submit disabled" id="sig-submit-btn" onclick="goToPage('page-result-review')">提交开户</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 14.1: Under Review ==================== -->
+  <div class="page" id="page-result-review">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-landing')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="result-page-content">
+      <div class="gauge-container">
+        <svg viewBox="0 0 200 200">
+          <!-- Background track: 270° arc -->
+          <circle cx="100" cy="100" r="80"
+            fill="none" stroke="#EBEBEB" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="376.99 502.65"
+            transform="rotate(135 100 100)" />
+          <!-- Fill: 90% of 270° = 243° -->
+          <circle cx="100" cy="100" r="80"
+            fill="none" stroke="url(#gaugeGradient90)" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="339.29 502.65"
+            transform="rotate(135 100 100)" />
+          <!-- Endpoint dot -->
+          <circle cx="176" cy="125" r="5.5" fill="#D4572A" />
+          <defs>
+            <linearGradient id="gaugeGradient90" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#E8855A" />
+              <stop offset="100%" stop-color="#D4572A" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="gauge-text">90<span>%</span></div>
+      </div>
+      <div class="result-title">已收到您的资料，正在审核中</div>
+      <div class="result-subtitle">我们将在1 ~ 2个工作日内完成审核</div>
+
+      <div class="funding-prep-card">
+        <div class="funding-prep-title">
+          <span class="funding-card-icon">💳</span>
+          <span>入金准备</span>
+        </div>
+        <div class="funding-prep-list">
+          <p>1. 香港银行卡</p>
+          <p>2. 入金10,000港元或等值货币激活账户</p>
+        </div>
+      </div>
+
+      <div style="width:100%; text-align:center; margin-top: 20px;">
+        <button class="btn-block" style="max-width:200px; margin:0 auto;" onclick="goToPage('page-result-approved')">查看审核通过</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 14.2: Approved ==================== -->
+  <div class="page" id="page-result-approved">
+    <div class="nav-bar">
+      <button class="back-btn" onclick="goToPage('page-landing')">‹</button>
+      <div class="nav-right"><span class="headphone-icon">🎧</span></div>
+    </div>
+    <div class="result-page-content">
+      <div class="gauge-container">
+        <svg viewBox="0 0 200 200">
+          <circle cx="100" cy="100" r="80"
+            fill="none" stroke="#EBEBEB" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="376.99 502.65"
+            transform="rotate(135 100 100)" />
+          <circle cx="100" cy="100" r="80"
+            fill="none" stroke="url(#gaugeGradient95)" stroke-width="10" stroke-linecap="round"
+            stroke-dasharray="358.14 502.65"
+            transform="rotate(135 100 100)" />
+          <circle cx="168" cy="142" r="5.5" fill="#D4572A" />
+          <defs>
+            <linearGradient id="gaugeGradient95" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#E8855A" />
+              <stop offset="100%" stop-color="#D4572A" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="gauge-text">95<span>%</span></div>
+      </div>
+      <div class="result-title">入金1万港元即可激活账户</div>
+      <div class="result-subtitle">还差一步就完成开户啦</div>
+
+      <div class="deposit-cards">
+        <div class="deposit-card deposit-card-standard">
+          <div class="deposit-card-inner">
+            <h4>入金1万港元或等值货币</h4>
+            <p class="deposit-highlight">激活iARK HK账户</p>
+          </div>
+        </div>
+        <div class="deposit-card deposit-card-premium">
+          <div class="deposit-card-inner">
+            <h4>入金15万美元</h4>
+            <p>享受全球私行级<br>财富管理服务</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="deposit-cta-wrap">
+        <button class="btn-block deposit-cta-btn">入金</button>
+      </div>
+
+      <div class="pro-investor-card">
+        <div class="pro-left">
+          <span class="pro-icon">🛡</span>
+          <div class="pro-text">
+            <h4>开通专业投资者</h4>
+            <p>解锁私募基金、结构性产品及更多<br>投资产品种类</p>
+          </div>
+        </div>
+        <button class="pro-btn">立即开通</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Country Selector Modal -->
+  <div class="modal-overlay" id="modal-country" onclick="closeModalOnOverlay(event)">
+    <div class="bottom-sheet">
+      <div class="bottom-sheet-header">
+        <span></span>
+        <h3>其他国家/地区</h3>
+        <button class="bottom-sheet-close" onclick="closeModal('modal-country')">✕</button>
+      </div>
+      <div class="bottom-sheet-body">
+        <div class="bottom-sheet-search">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input placeholder="请输入国家/地区" />
+          </div>
+        </div>
+        <div class="sheet-section-title">常用地区</div>
+        <div class="sheet-list-item" onclick="selectCountry('中国内地','🇨🇳')"><span class="flag">🇨🇳</span><span class="item-name">中国内地</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('中国香港','🇭🇰')"><span class="flag">🇭🇰</span><span class="item-name">中国香港</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('新加坡','🇸🇬')"><span class="flag">🇸🇬</span><span class="item-name">新加坡</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('中国澳门','🇲🇴')"><span class="flag">🇲🇴</span><span class="item-name">中国澳门</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('中国台湾','🇹🇼')"><span class="flag">🇹🇼</span><span class="item-name">中国台湾</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('澳大利亚','🇦🇺')"><span class="flag">🇦🇺</span><span class="item-name">澳大利亚</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('加拿大','🇨🇦')"><span class="flag">🇨🇦</span><span class="item-name">加拿大</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('马来西亚','🇲🇾')"><span class="flag">🇲🇾</span><span class="item-name">马来西亚</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('希腊','🇬🇷')"><span class="flag">🇬🇷</span><span class="item-name">希腊</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('土耳其','🇹🇷')"><span class="flag">🇹🇷</span><span class="item-name">土耳其</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('新西兰','🇳🇿')"><span class="flag">🇳🇿</span><span class="item-name">新西兰</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('英国','🇬🇧')"><span class="flag">🇬🇧</span><span class="item-name">英国</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('日本','🇯🇵')"><span class="flag">🇯🇵</span><span class="item-name">日本</span></div>
+        <div class="sheet-list-item" onclick="selectCountry('韩国','🇰🇷')"><span class="flag">🇰🇷</span><span class="item-name">韩国</span></div>
+        <div class="alpha-index">
+          <span>*</span><span>A</span><span>B</span><span>C</span><span>D</span>
+          <span>F</span><span>H</span><span>L</span><span>M</span><span>N</span>
+          <span>P</span><span>R</span><span>S</span><span>T</span><span>X</span>
+          <span>Y</span><span>Z</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Selector Modal -->
+  <div class="modal-overlay" id="modal-document" onclick="closeModalOnOverlay(event)">
+    <div class="bottom-sheet" style="max-height: 40vh;">
+      <div class="bottom-sheet-header">
+        <span></span>
+        <h3>开户证件</h3>
+        <button class="bottom-sheet-close" onclick="closeModal('modal-document')">✕</button>
+      </div>
+      <div class="bottom-sheet-body">
+        <div id="doc-list">
+          <div class="sheet-list-item" onclick="selectDocument('希腊永久居留卡')"><span class="item-name">希腊永久居留卡</span></div>
+          <div class="sheet-list-item" onclick="selectDocument('希腊护照')"><span class="item-name">希腊护照</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Noya AI bottom sheet (landing) -->
+  <div class="noya-sheet-overlay" id="noya-sheet-overlay" onclick="closeNoyaSheetOnOverlay(event)">
+    <div class="noya-sheet" onclick="event.stopPropagation()">
+      <div class="noya-sheet-header">
+        <button type="button" class="noya-sheet-menu" aria-label="menu">
+          <span class="noya-menu-bar"></span><span class="noya-menu-bar"></span>
+        </button>
+        <div class="noya-sheet-brand">
+          <span class="noya-avatar" aria-hidden="true"></span>
+          <span class="noya-brand-text">Noya AI</span>
+        </div>
+        <button type="button" class="noya-sheet-close" onclick="closeNoyaSheet()" aria-label="关闭">✕</button>
+      </div>
+      <div class="noya-sheet-body">
+        <h2 class="noya-greeting">有什么可以帮忙的？</h2>
+        <p class="noya-sub">有问题，随时可以问我</p>
+        <div class="noya-suggestions">
+          <button type="button" class="noya-suggest-card">
+            <span class="noya-suggest-arrow">↗</span>
+            <span class="noya-suggest-text">乱世买黄金还有效吗？2026 年黄金还能涨吗？</span>
+          </button>
+          <button type="button" class="noya-suggest-card">
+            <span class="noya-suggest-arrow">↗</span>
+            <span class="noya-suggest-text">在 AI 时代，普通家庭应该如何参与全球资产配置？</span>
+          </button>
+          <button type="button" class="noya-suggest-card">
+            <span class="noya-suggest-arrow">↗</span>
+            <span class="noya-suggest-text">现在适合把虚拟资产纳入长期资产配置吗？</span>
+          </button>
+        </div>
+        <div class="noya-mid-actions">
+          <button type="button" class="noya-pill-btn">📊 证券组合</button>
+          <button type="button" class="noya-pill-btn">💬 聊聊CIO</button>
+        </div>
+      </div>
+      <div class="noya-sheet-footer">
+        <div class="noya-input-wrap">
+          <input type="text" class="noya-input" id="noya-input-placeholder" placeholder="有问题，随时可以问我" readonly />
+        </div>
+        <div class="noya-footer-row">
+          <span class="noya-disclaimer"><span class="noya-disclaimer-icon">◇</span> AI解读仅供参考</span>
+          <div class="noya-footer-icons">
+            <span class="noya-foot-icon">+</span>
+            <span class="noya-foot-icon">🎤</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===== State ===== */
+const state = {
+  selectedIdentity: 'other',
+  selectedCountry: null,
+  selectedDocument: null,
+  countryLocked: false,
+  taxHasNumber: true,
+  lang: 'zh-Hans',
+  signatureAgreed: false,
+  hasSignature: false,
+  idVerifyStep: 'empty' // empty | country-selected | doc-selected | uploaded | ocr
+};
+
+/* ===== i18n ===== */
+const I18N = {
+  'zh-Hant': {
+    '立即开户': '立即開戶',
+    '连接全球的财富世界': '連接全球的財富世界',
+    '懂金融，更懂华人': '懂金融，更懂華人',
+    '港美双重上市': '港美雙重上市',
+    '全球布局': '全球布局',
+    '城': '城',
+    '年+': '年+',
+    '稳健经营': '穩健經營',
+    '有什么可以帮忙的？': '有什麼可以幫忙的？',
+    '有问题，随时可以问我': '有問題，隨時可以問我',
+    '乱世买黄金还有效吗？2026 年黄金还能涨吗？': '亂世買黃金還有效嗎？2026 年黃金還能漲嗎？',
+    '在 AI 时代，普通家庭应该如何参与全球资产配置？': '在 AI 時代，普通家庭應該如何參與全球資產配置？',
+    '现在适合把虚拟资产纳入长期资产配置吗？': '現在適合把虛擬資產納入長期資產配置嗎？',
+    '证券组合': '證券組合',
+    '聊聊CIO': '聊聊CIO',
+    '📊 证券组合': '📊 證券組合',
+    '💬 聊聊CIO': '💬 聊聊CIO',
+    'AI解读仅供参考': 'AI解讀僅供參考',
+    '开始开户': '開始開戶',
+    '上一步': '上一步',
+    '确认并下一步': '確認並下一步',
+    '签署开户文件': '簽署開戶文件',
+    '提交开户': '提交開戶',
+    '重写': '重寫',
+    '选择您的身份信息': '選擇您的身份資訊',
+    '香港居民': '香港居民',
+    '澳门居民': '澳門居民',
+    '其他国家/地区': '其他國家/地區',
+    '身份信息验证': '身份資訊驗證',
+    '证件签发国/地区': '證件簽發國/地區',
+    '开户证件': '開戶證件',
+    '税务信息': '稅務資訊',
+    '税务管辖区（CRS & W-8BEN）': '稅務管轄區（CRS & W-8BEN）',
+    '税务编码': '稅務編碼',
+    '可以提供税务编码': '可以提供稅務編碼',
+    '无法提供税务编码': '無法提供稅務編碼',
+    '解释说明': '解釋說明',
+    '信息确认': '資訊確認',
+    '声明': '聲明',
+    '香港': '香港',
+    '澳门': '澳門',
+    '中国香港': '中國香港',
+    '中国澳门': '中國澳門',
+    '中国内地': '中國內地'
+  },
+  en: {
+    '立即开户': 'Open account',
+    '连接全球的财富世界': 'A world of wealth, connected globally',
+    '懂金融，更懂华人': 'Finance expertise that understands you',
+    '港美双重上市': 'Dual-listed in HK & US',
+    '全球布局': 'Global footprint',
+    '城': ' cities',
+    '年+': '+ yrs',
+    '稳健经营': 'Stable operations',
+    '有什么可以帮忙的？': 'How can I help?',
+    '有问题，随时可以问我': 'Ask me anytime',
+    '乱世买黄金还有效吗？2026 年黄金还能涨吗？': 'Is gold still a hedge in volatile times? Will gold rise in 2026?',
+    '在 AI 时代，普通家庭应该如何参与全球资产配置？': 'In the AI era, how should families participate in global allocation?',
+    '现在适合把虚拟资产纳入长期资产配置吗？': 'Should virtual assets be part of long-term allocation now?',
+    '证券组合': 'Portfolio',
+    '聊聊CIO': 'Chat with CIO',
+    '📊 证券组合': '📊 Portfolio',
+    '💬 聊聊CIO': '💬 Chat with CIO',
+    'AI解读仅供参考': 'AI insights are for reference only',
+    '开始开户': 'Start',
+    '上一步': 'Back',
+    '确认并下一步': 'Confirm & Next',
+    '签署开户文件': 'Sign Documents',
+    '提交开户': 'Submit',
+    '重写': 'Rewrite',
+    '选择您的身份信息': 'Select your identity',
+    '香港居民': 'Hong Kong resident',
+    '澳门居民': 'Macau resident',
+    '其他国家/地区': 'Other countries/regions',
+    '身份信息验证': 'Identity verification',
+    '证件签发国/地区': 'Issuing country/region',
+    '开户证件': 'Account opening document',
+    '税务信息': 'Tax information',
+    '税务管辖区（CRS & W-8BEN）': 'Tax jurisdiction (CRS & W-8BEN)',
+    '税务编码': 'Tax ID',
+    '可以提供税务编码': 'I can provide a Tax ID',
+    '无法提供税务编码': 'I cannot provide a Tax ID',
+    '解释说明': 'Learn more',
+    '信息确认': 'Review information',
+    '声明': 'Declaration',
+    '香港': 'Hong Kong',
+    '澳门': 'Macau',
+    '中国香港': 'Hong Kong, China',
+    '中国澳门': 'Macau, China',
+    '中国内地': 'Mainland China'
+  }
+};
+
+function t(key) {
+  const lang = state.lang || 'zh-Hans';
+  if (lang === 'zh-Hans') return key;
+  return (I18N[lang] && I18N[lang][key]) ? I18N[lang][key] : key;
+}
+
+function applyTranslations() {
+  // Translate simple leaf text nodes by exact match
+  const dict = I18N[state.lang] || {};
+  const keys = new Set(Object.keys(dict));
+  document.querySelectorAll('button,span,div,h1,h2,h3,p,label').forEach(el => {
+    if (el.children && el.children.length) return;
+    const raw = (el.textContent || '').trim();
+    if (!raw) return;
+    if (keys.has(raw)) el.textContent = dict[raw];
+  });
+
+  // Translate common placeholders
+  document.querySelectorAll('input[placeholder]').forEach(inp => {
+    const ph = (inp.getAttribute('placeholder') || '').trim();
+    if (dict[ph]) inp.setAttribute('placeholder', dict[ph]);
+  });
+}
+
+function setLanguage(lang) {
+  state.lang = lang;
+  try { localStorage.setItem('iark_lang', lang); } catch (e) {}
+  const menu = document.getElementById('lang-menu');
+  if (menu) menu.classList.remove('active');
+  applyTranslations();
+}
+
+function initLanguage() {
+  try {
+    const saved = localStorage.getItem('iark_lang');
+    if (saved) state.lang = saved;
+  } catch (e) {}
+  applyTranslations();
+}
+
+function toggleLangMenu(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  const menu = document.getElementById('lang-menu');
+  if (!menu) return;
+  menu.classList.toggle('active');
+}
+
+document.addEventListener('click', function() {
+  const menu = document.getElementById('lang-menu');
+  if (menu) menu.classList.remove('active');
+});
+
+function openNoyaSheet(e) {
+  if (e && e.stopPropagation) e.stopPropagation();
+  const menu = document.getElementById('lang-menu');
+  if (menu) menu.classList.remove('active');
+  const o = document.getElementById('noya-sheet-overlay');
+  if (o) o.classList.add('active');
+}
+
+function closeNoyaSheet() {
+  const o = document.getElementById('noya-sheet-overlay');
+  if (o) o.classList.remove('active');
+}
+
+function closeNoyaSheetOnOverlay(e) {
+  if (e && e.target && e.target.id === 'noya-sheet-overlay') closeNoyaSheet();
+}
+
+function applyIdVerifyCountryPrefill() {
+  const display = document.getElementById('country-display');
+  const docDisplay = document.getElementById('doc-display');
+  const nextBtn = document.getElementById('id-verify-next');
+
+  if (!display) return;
+
+  // Prefill by selected identity
+  const prevCountry = state.selectedCountry;
+  let nextCountry = prevCountry;
+  let displayCountry = prevCountry;
+  let locked = false;
+  if (state.selectedIdentity === 'hk') {
+    nextCountry = '中国香港';
+    displayCountry = '香港';
+    locked = true;
+  } else if (state.selectedIdentity === 'macau') {
+    nextCountry = '中国澳门';
+    displayCountry = '澳门';
+    locked = true;
+  } else {
+    // For "other", keep any previously selected country (if user already picked it)
+    displayCountry = prevCountry;
+    locked = false;
+  }
+
+  // If derived country changed, clear doc selection/UI to avoid stale docs.
+  const countryChanged = nextCountry !== prevCountry;
+  state.selectedCountry = nextCountry;
+  state.countryLocked = locked;
+  if (countryChanged) state.selectedDocument = null;
+
+  display.textContent = displayCountry ? displayCountry : '请选择';
+  display.classList.remove('field-placeholder', 'field-value');
+  display.classList.add(displayCountry ? 'field-value' : 'field-placeholder');
+
+  if (docDisplay) {
+    if (countryChanged) {
+      docDisplay.textContent = '请选择';
+      docDisplay.classList.remove('field-placeholder', 'field-value');
+      docDisplay.classList.add('field-placeholder');
+    } else if (state.selectedDocument) {
+      // Keep UI consistent when returning to this page
+      docDisplay.textContent = state.selectedDocument;
+      docDisplay.classList.remove('field-placeholder', 'field-value');
+      docDisplay.classList.add('field-value');
+    }
+  }
+
+  // Re-evaluate section & next button based on selectedCountry/selectedDocument
+  // (updateIdVerifyState uses state.selectedCountry and state.selectedDocument)
+  updateIdVerifyState();
+}
+
+/* ===== Page Navigation ===== */
+function goToPage(pageId) {
+  // Toggle forced landscape mode for signature page
+  if (pageId === 'page-signature') {
+    document.body.classList.add('signature-force-landscape');
+  } else {
+    document.body.classList.remove('signature-force-landscape');
+  }
+
+  if (pageId !== 'page-landing') {
+    closeNoyaSheet();
+  }
+
+  const pages = document.querySelectorAll('.page');
+  pages.forEach(p => {
+    p.classList.remove('active', 'slide-in-right', 'slide-out-left');
+    p.style.display = 'none';
+  });
+  const target = document.getElementById(pageId);
+  if (target) {
+    target.style.display = 'flex';
+    target.classList.add('active');
+  }
+
+  if (pageId === 'page-signature') {
+    // Wait for rotation/layout to apply before measuring canvas size
+    requestAnimationFrame(() => initSignatureCanvas());
+  }
+
+  // Prefill id verification country when entering that page
+  if (pageId === 'page-id-verify') {
+    applyIdVerifyCountryPrefill();
+  }
+
+  // Apply tax number provide state when entering that page
+  if (pageId === 'page-tax') {
+    applyTaxNumberState();
+  }
+
+  // Prefill OCR display fields from previous identity selection
+  if (pageId === 'page-ocr') {
+    applyOcrPrefill();
+  }
+}
+
+/* ===== Identity Selection (Screen 1) ===== */
+function selectIdentity(el) {
+  document.querySelectorAll('.identity-card').forEach(card => {
+    card.classList.remove('selected');
+  });
+  el.classList.add('selected');
+  state.selectedIdentity = el.dataset.identity;
+
+  // Update/correct id-verify prefill state now so it also affects next navigation.
+  // (UI will be applied when goToPage('page-id-verify') runs.)
+  if (state.selectedIdentity === 'hk') {
+    state.selectedCountry = '中国香港';
+    state.countryLocked = true;
+  } else if (state.selectedIdentity === 'macau') {
+    state.selectedCountry = '中国澳门';
+    state.countryLocked = true;
+  } else {
+    state.selectedCountry = null;
+    state.countryLocked = false;
+  }
+
+  // Clear doc selection whenever identity changes
+  state.selectedDocument = null;
+}
+
+/* ===== Modal Management ===== */
+function openModal(modalId) {
+  // If country is locked (hk/macau), prevent manual re-selection.
+  if (modalId === 'modal-country' && state.countryLocked) return;
+  const modal = document.getElementById(modalId);
+  if (modal) modal.classList.add('active');
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) modal.classList.remove('active');
+}
+
+function closeModalOnOverlay(event) {
+  if (event.target.classList.contains('modal-overlay')) {
+    event.target.classList.remove('active');
+  }
+}
+
+/* ===== Country Selection ===== */
+function selectCountry(name) {
+  state.selectedCountry = name;
+  state.countryLocked = false;
+  const display = document.getElementById('country-display');
+  display.textContent = name;
+  display.classList.remove('field-placeholder');
+  display.classList.add('field-value');
+  closeModal('modal-country');
+  updateIdVerifyState();
+}
+
+/* ===== Tax Number Provide Toggle (Screen 6) ===== */
+function applyTaxNumberState() {
+  const toggleRow = document.getElementById('tax-provide-toggle');
+  const label = document.getElementById('tax-provide-label');
+  const numberSection = document.getElementById('tax-number-section');
+  const addWrap = document.getElementById('tax-add-wrap');
+  const input = document.getElementById('tax-number-input');
+
+  if (!toggleRow || !label || !numberSection || !addWrap || !input) return;
+
+  if (state.taxHasNumber) {
+    toggleRow.classList.add('checked');
+    label.textContent = '可以提供税务编码';
+    numberSection.style.display = 'block';
+    input.disabled = false;
+    addWrap.style.display = 'block';
+  } else {
+    toggleRow.classList.remove('checked');
+    label.textContent = '无法提供税务编码';
+    numberSection.style.display = 'none';
+    input.disabled = true;
+    addWrap.style.display = 'block';
+  }
+}
+
+function toggleTaxNumber(el) {
+  // Switch state then re-render UI
+  state.taxHasNumber = !state.taxHasNumber;
+  applyTaxNumberState();
+}
+
+/* ===== OCR Page Prefill ===== */
+function getOcrCountryDisplay(country) {
+  // Match ID-verify display: show "香港/澳门" instead of internal "中国香港/中国澳门"
+  if (country === '中国香港') return '香港';
+  if (country === '中国澳门') return '澳门';
+  return country || '请选择';
+}
+
+function applyOcrPrefill() {
+  const countryEl = document.getElementById('ocr-country-display');
+  const docEl = document.getElementById('ocr-doc-display');
+  const titleEl = document.getElementById('ocr-doc-title');
+  if (!countryEl || !docEl) return;
+
+  countryEl.textContent = getOcrCountryDisplay(state.selectedCountry);
+  docEl.textContent = state.selectedDocument || '请选择';
+  if (titleEl) titleEl.textContent = state.selectedDocument || '请选择';
+}
+
+/* ===== Document Selection ===== */
+function openDocumentSelector() {
+  if (!state.selectedCountry) {
+    openModal('modal-country');
+    return;
+  }
+  updateDocList();
+  openModal('modal-document');
+}
+
+function updateDocList() {
+  const docList = document.getElementById('doc-list');
+  const country = state.selectedCountry;
+  const docs = getDocsForCountry(country);
+  docList.innerHTML = docs.map(doc =>
+    `<div class="sheet-list-item" onclick="selectDocument('${doc}')"><span class="item-name">${doc}</span></div>`
+  ).join('');
+}
+
+function getDocsForCountry(country) {
+  // Rule from requirements:
+  // - 香港: 3 docs
+  // - 澳门: 2 docs
+  // - 中国内地: 2 docs = 港澳通行证 + 中国护照
+  // - 其他国家/地区: 2 docs = [国家]永久居留卡 + [国家]护照
+  if (country === '中国香港') {
+    return ['香港永久性居民身份证', '香港护照', '香港非永久居民身份'];
+  }
+  if (country === '中国澳门') {
+    return ['澳门永久性居民身份证', '澳门护照'];
+  }
+  if (country === '中国内地') {
+    return ['港澳通行证', '中国护照'];
+  }
+  if (!country) return [];
+  return [country + '永久居留卡', country + '护照'];
+}
+
+function selectDocument(name) {
+  state.selectedDocument = name;
+  const display = document.getElementById('doc-display');
+  display.textContent = name;
+  display.classList.remove('field-placeholder');
+  display.classList.add('field-value');
+  closeModal('modal-document');
+  updateIdVerifyState();
+}
+
+function updateIdVerifyState() {
+  const uploadSection = document.getElementById('upload-section');
+  const nextBtn = document.getElementById('id-verify-next');
+
+  if (state.selectedCountry && state.selectedDocument) {
+    uploadSection.style.display = 'block';
+    document.getElementById('upload-title').textContent = '上传' + state.selectedDocument;
+    document.getElementById('upload-label').textContent = state.selectedDocument + '-人像面';
+    nextBtn.classList.remove('disabled');
+  } else if (state.selectedCountry) {
+    uploadSection.style.display = 'none';
+    nextBtn.classList.add('disabled');
+  }
+}
+
+function handleIdVerifyNext() {
+  goToPage('page-camera');
+}
+
+/* ===== Camera (Screen 2.5) ===== */
+function simulateCapture() {
+  goToPage('page-camera');
+}
+
+function capturePhoto() {
+  goToPage('page-ocr');
+}
+
+/* ===== Address (Screen 3) ===== */
+function selectAddressCountry() {
+  // For demo, just toggle
+}
+
+/* ===== Checkbox Toggle ===== */
+function toggleCheckbox(el) {
+  el.classList.toggle('checked');
+}
+
+/* ===== Checkbox Card Toggle ===== */
+function toggleCheckboxCard(el) {
+  el.classList.toggle('checked');
+}
+
+/* ===== Radio Selection ===== */
+function selectRadio(el) {
+  const group = el.parentElement;
+  group.querySelectorAll('.radio-item').forEach(item => {
+    item.classList.remove('selected');
+  });
+  el.classList.add('selected');
+}
+
+/* ===== Cycle Select (simulates dropdown) ===== */
+function cycleSelect(el, options) {
+  const valueEl = el.querySelector('.field-value, .field-placeholder');
+  if (!valueEl) return;
+
+  const current = valueEl.textContent;
+  const idx = options.indexOf(current);
+  const next = options[(idx + 1) % options.length];
+
+  valueEl.textContent = next;
+  if (next === '请选择') {
+    valueEl.classList.remove('field-value');
+    valueEl.classList.add('field-placeholder');
+  } else {
+    valueEl.classList.remove('field-placeholder');
+    valueEl.classList.add('field-value');
+  }
+}
+
+/* ===== Signature Canvas ===== */
+let signatureCtx = null;
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+
+function initSignatureCanvas() {
+  const canvas = document.getElementById('signatureCanvas');
+  if (!canvas) return;
+
+  // Use requestAnimationFrame to ensure layout is complete
+  requestAnimationFrame(() => {
+    const wrap = canvas.parentElement;
+    const rect = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 2;
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    signatureCtx = canvas.getContext('2d');
+    signatureCtx.scale(dpr, dpr);
+    signatureCtx.strokeStyle = '#222';
+    signatureCtx.lineWidth = 3;
+    signatureCtx.lineCap = 'round';
+    signatureCtx.lineJoin = 'round';
+  });
+
+  canvas.removeEventListener('touchstart', handleTouchStart);
+  canvas.removeEventListener('touchmove', handleTouchMove);
+  canvas.removeEventListener('touchend', handleTouchEnd);
+  canvas.removeEventListener('mousedown', handleMouseDown);
+  canvas.removeEventListener('mousemove', handleMouseMove);
+  canvas.removeEventListener('mouseup', handleMouseUp);
+
+  canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+  canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+  canvas.addEventListener('touchend', handleTouchEnd);
+  canvas.addEventListener('mousedown', handleMouseDown);
+  canvas.addEventListener('mousemove', handleMouseMove);
+  canvas.addEventListener('mouseup', handleMouseUp);
+}
+
+window.addEventListener('resize', function() {
+  const sigPage = document.getElementById('page-signature');
+  if (sigPage && sigPage.classList.contains('active')) {
+    initSignatureCanvas();
+  }
+});
+
+function getCanvasPos(e, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: clientX - rect.left,
+    y: clientY - rect.top
+  };
+}
+
+function handleTouchStart(e) {
+  e.preventDefault();
+  isDrawing = true;
+  const pos = getCanvasPos(e, e.target);
+  lastX = pos.x;
+  lastY = pos.y;
+  document.getElementById('sig-placeholder').classList.add('hidden');
+  state.hasSignature = true;
+  updateSubmitBtn();
+}
+
+function handleTouchMove(e) {
+  e.preventDefault();
+  if (!isDrawing) return;
+  const pos = getCanvasPos(e, e.target);
+  signatureCtx.beginPath();
+  signatureCtx.moveTo(lastX, lastY);
+  signatureCtx.lineTo(pos.x, pos.y);
+  signatureCtx.stroke();
+  lastX = pos.x;
+  lastY = pos.y;
+}
+
+function handleTouchEnd() {
+  isDrawing = false;
+}
+
+function handleMouseDown(e) {
+  isDrawing = true;
+  const pos = getCanvasPos(e, e.target);
+  lastX = pos.x;
+  lastY = pos.y;
+  document.getElementById('sig-placeholder').classList.add('hidden');
+  state.hasSignature = true;
+  updateSubmitBtn();
+}
+
+function handleMouseMove(e) {
+  if (!isDrawing) return;
+  const pos = getCanvasPos(e, e.target);
+  signatureCtx.beginPath();
+  signatureCtx.moveTo(lastX, lastY);
+  signatureCtx.lineTo(pos.x, pos.y);
+  signatureCtx.stroke();
+  lastX = pos.x;
+  lastY = pos.y;
+}
+
+function handleMouseUp() {
+  isDrawing = false;
+}
+
+function clearSignature() {
+  const canvas = document.getElementById('signatureCanvas');
+  if (signatureCtx && canvas) {
+    signatureCtx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  document.getElementById('sig-placeholder').classList.remove('hidden');
+  state.hasSignature = false;
+  updateSubmitBtn();
+}
+
+function toggleSigAgree() {
+  state.signatureAgreed = !state.signatureAgreed;
+  const box = document.getElementById('sig-agree-box');
+  if (state.signatureAgreed) {
+    box.style.background = 'var(--primary)';
+    box.style.borderColor = 'var(--primary)';
+  } else {
+    box.style.background = 'transparent';
+    box.style.borderColor = '#ddd';
+  }
+  updateSubmitBtn();
+}
+
+function updateSubmitBtn() {
+  const btn = document.getElementById('sig-submit-btn');
+  if (state.hasSignature && state.signatureAgreed) {
+    btn.classList.remove('disabled');
+  } else {
+    btn.classList.add('disabled');
+  }
+}
+
+/* ===== Dot Globe ===== */
+function drawDotGlobe() {
+  var canvas = document.getElementById('globeCanvas');
+  if (!canvas) return;
+  var dpr = window.devicePixelRatio || 2;
+  var size = 320;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  var cx = size / 2, cy = size / 2, R = size * 0.44, dotR = 1.4, step = 5;
+  var rotLng = 1.5, rotLat = 0.25;
+
+  function isLand(lat, lng) {
+    if (lng > 180) lng -= 360;
+    if (lng < -180) lng += 360;
+    if (lat > 45 && lat < 75 && lng > 60 && lng < 180) return true;
+    if (lat > 20 && lat < 45 && lng > 75 && lng < 135) return true;
+    if (lat > 8 && lat < 35 && lng > 68 && lng < 90) return true;
+    if (lat > 30 && lat < 46 && lng > 126 && lng < 146) return true;
+    if (lat > -8 && lat < 20 && lng > 95 && lng < 140) return true;
+    if (lat > 12 && lat < 42 && lng > 25 && lng < 65) return true;
+    if (lat > 36 && lat < 72 && lng > -10 && lng < 55) return true;
+    if (lat > -35 && lat < 37 && lng > -18 && lng < 52) return true;
+    if (lat > 25 && lat < 72 && lng > -170 && lng < -50) return true;
+    if (lat > 7 && lat < 25 && lng > -120 && lng < -75) return true;
+    if (lat > -56 && lat < 12 && lng > -82 && lng < -34) return true;
+    if (lat > -40 && lat < -11 && lng > 112 && lng < 155) return true;
+    if (lat > 60 && lat < 84 && lng > -75 && lng < -12) return true;
+    if (lat > 50 && lat < 60 && lng > -11 && lng < 2) return true;
+    return false;
+  }
+
+  for (var lat = -85; lat <= 85; lat += step) {
+    var latRad = lat * Math.PI / 180;
+    var lngStep = step / Math.max(Math.cos(latRad), 0.2);
+    if (lngStep > 60) lngStep = 60;
+    for (var lng = -180; lng < 180; lng += lngStep) {
+      if (!isLand(lat, lng)) continue;
+      var lngRad = lng * Math.PI / 180;
+      var x = Math.cos(latRad) * Math.sin(lngRad - rotLng);
+      var y = -(Math.sin(latRad) * Math.cos(rotLat) - Math.cos(latRad) * Math.cos(lngRad - rotLng) * Math.sin(rotLat));
+      var z = Math.sin(latRad) * Math.sin(rotLat) + Math.cos(latRad) * Math.cos(lngRad - rotLng) * Math.cos(rotLat);
+      if (z > 0.02) {
+        var px = cx + x * R;
+        var py = cy + y * R;
+        var alpha = 0.12 + z * 0.3;
+        ctx.beginPath();
+        ctx.arc(px, py, dotR, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(170, 150, 120, ' + alpha + ')';
+        ctx.fill();
+      }
+    }
+  }
+}
+
+/* ===== Init ===== */
+document.addEventListener('DOMContentLoaded', function() {
+  goToPage('page-landing');
+  drawDotGlobe();
+  initLanguage();
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+@import '../../css/style.css';
+
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+/* In React, routing controls page visibility; override legacy .page { display: none } */
+.legacy-page-root {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.legacy-page-root > .page {
+  display: flex !important;
+}
+.legacy-page-root > .page.signature-page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+/* Portrait nav at top, then a content area that holds the rotated signature controls. */
+.sig-content-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--white);
+}
+
+/* Inner block rotated 90deg: landscape canvas + controls inside a portrait page.
+   JS sets width/height dynamically based on measured container. */
+.sig-rotated-inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  background: var(--white);
+}
+
+.sig-rotated-inner .signature-canvas-wrap {
+  flex: 1;
+  background: var(--bg);
+  margin: 12px;
+  border-radius: var(--radius);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sig-rotated-inner .signature-canvas-wrap canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+.sig-rotated-inner .signature-bottom {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  gap: 10px;
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.sig-rotated-inner .signature-bottom .agreement {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.sig-rotated-inner .signature-bottom .agreement a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
