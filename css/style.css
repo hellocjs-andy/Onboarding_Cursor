@@ -1446,7 +1446,7 @@ html, body {
 
 .noya-sheet {
   width: 100%;
-  max-width: 390px;
+  max-width: 100%;
   height: min(96vh, 860px);
   background: linear-gradient(180deg, #f5f8ff 0%, #ffffff 28%, #ffffff 100%);
   border-radius: 20px 20px 0 0;
