@@ -462,6 +462,8 @@ html, body {
   background: var(--white);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
@@ -2799,4 +2801,20 @@ body.signature-force-landscape {
   color: #e8a040;
   font-size: 16px;
   font-weight: 600;
+}
+
+/* ===== Global: prevent any overlay sheet from exceeding viewport ===== */
+.modal-overlay,
+.dp-overlay,
+.op-overlay,
+.noya-sheet-overlay {
+  max-width: 100vw;
+  overflow: hidden;
+}
+.bottom-sheet,
+.dp-sheet,
+.op-sheet,
+.noya-sheet {
+  max-width: 100vw;
+  box-sizing: border-box;
 }
