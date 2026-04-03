@@ -61,6 +61,7 @@ export const I18N: Record<string, Dict> = {
     澳门居民: '澳門居民',
     '持有澳门永久/非永久居民身份证': '持有澳門永久/非永久居民身份證',
     '其他国家/地区': '其他國家/地區',
+    '证件签发国家/地区': '證件簽發國家/地區',
 
     // ── ID Verify ──
     身份信息验证: '身份資訊驗證',
@@ -320,6 +321,7 @@ export const I18N: Record<string, Dict> = {
     澳门居民: 'Macau Resident',
     '持有澳门永久/非永久居民身份证': 'Macau permanent/non-permanent ID card holder',
     '其他国家/地区': 'Other Countries/Regions',
+    '证件签发国家/地区': 'Issuing Country / Region',
 
     // ── ID Verify ──
     身份信息验证: 'Identity Verification',

@@ -287,7 +287,18 @@ export function selectIdentity(el: HTMLElement) {
 export function openModal(modalId: string) {
   if (modalId === 'modal-country' && onboardingState.countryLocked) return;
   const modal = document.getElementById(modalId);
-  if (modal) modal.classList.add('active');
+  if (modal) {
+    modal.classList.add('active');
+    if (modalId === 'modal-country') {
+      const inp = document.getElementById('country-search-input') as HTMLInputElement | null;
+      if (inp) {
+        inp.value = '';
+        document.querySelectorAll('#country-list .sheet-list-item').forEach((el) => {
+          (el as HTMLElement).style.display = '';
+        });
+      }
+    }
+  }
 }
 
 export function closeModal(modalId: string) {
@@ -300,6 +311,17 @@ export function closeModalOnOverlay(event: MouseEvent) {
   if (t.classList.contains('modal-overlay')) {
     t.classList.remove('active');
   }
+}
+
+export function filterCountryList(ev: Event) {
+  const input = ev.target as HTMLInputElement;
+  const q = (input.value || '').trim().toLowerCase();
+  const list = document.getElementById('country-list');
+  if (!list) return;
+  list.querySelectorAll('.sheet-list-item').forEach((el) => {
+    const text = (el.textContent || '').toLowerCase();
+    (el as HTMLElement).style.display = !q || text.includes(q) ? '' : 'none';
+  });
 }
 
 export function selectCountry(name: string, _flag?: string) {
@@ -899,6 +921,7 @@ export function installOnboardingGlobals(navigate: NavigateFunction) {
   w.closeModal = closeModal;
   w.closeModalOnOverlay = closeModalOnOverlay;
   w.selectCountry = selectCountry;
+  w.filterCountryList = filterCountryList;
   w.toggleTaxNumber = toggleTaxNumber;
   w.openDocumentSelector = openDocumentSelector;
   w.selectDocument = selectDocument;
