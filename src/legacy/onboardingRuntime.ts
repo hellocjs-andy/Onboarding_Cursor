@@ -7,7 +7,6 @@ export const onboardingState = {
   selectedIdentity: 'other',
   selectedCountry: null as string | null,
   selectedDocument: null as string | null,
-  countryLocked: false,
   taxHasNumber: true,
   lang: 'zh-Hans',
   signatureAgreed: false,
@@ -22,84 +21,10 @@ function goToPage(pageId: string) {
   if (path && navigateRef) navigateRef(path);
 }
 
-let globeDrawn = false;
-
-function drawLandingGlobe() {
-  if (globeDrawn) return;
-  const canvas = document.getElementById('landing-globe-canvas') as HTMLCanvasElement | null;
-  if (!canvas) return;
-
-  const dpr = window.devicePixelRatio || 2;
-  const size = canvas.offsetWidth;
-  if (!size) return;
-  canvas.width = size * dpr;
-  canvas.height = size * dpr;
-
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  ctx.scale(dpr, dpr);
-  globeDrawn = true;
-
-  const cx = size * 0.45;
-  const cy = size * 0.5;
-  const R = size * 0.44;
-  const dotR = Math.max(1, size * 0.003);
-  const color = 'rgba(180,175,168,0.55)';
-  const rotY = 110 * Math.PI / 180;
-
-  ctx.fillStyle = color;
-
-  for (let latDeg = -80; latDeg <= 80; latDeg += 8) {
-    const lat = latDeg * Math.PI / 180;
-    const cosLat = Math.cos(lat);
-    const sinLat = Math.sin(lat);
-    const step = Math.max(8, Math.round(10 / cosLat));
-    for (let lonDeg = 0; lonDeg < 360; lonDeg += step) {
-      const lon = lonDeg * Math.PI / 180 - rotY;
-      const z = cosLat * Math.cos(lon);
-      if (z < 0) continue;
-      const x = cosLat * Math.sin(lon);
-      const y = -sinLat;
-      const px = cx + x * R;
-      const py = cy + y * R;
-      const alpha = 0.3 + z * 0.5;
-      ctx.globalAlpha = alpha;
-      ctx.beginPath();
-      ctx.arc(px, py, dotR, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  for (let lonDeg = 0; lonDeg < 360; lonDeg += 20) {
-    const lon = lonDeg * Math.PI / 180 - rotY;
-    for (let latDeg = -80; latDeg <= 80; latDeg += 6) {
-      const lat = latDeg * Math.PI / 180;
-      const cosLat = Math.cos(lat);
-      const z = cosLat * Math.cos(lon);
-      if (z < 0) continue;
-      const x = cosLat * Math.sin(lon);
-      const y = -Math.sin(lat);
-      const px = cx + x * R;
-      const py = cy + y * R;
-      const alpha = 0.2 + z * 0.4;
-      ctx.globalAlpha = alpha;
-      ctx.beginPath();
-      ctx.arc(px, py, dotR * 0.8, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  ctx.globalAlpha = 1;
-}
-
 export function applyRouteSideEffects(pathname: string) {
   const norm = pathname || '/';
   const pageId = PATH_TO_PAGE_ID[norm];
   if (!pageId) return;
-
-  if (pageId === 'page-landing') {
-    requestAnimationFrame(drawLandingGlobe);
-  }
 
   if (pageId === 'page-signature') {
     requestAnimationFrame(() => {
@@ -225,23 +150,18 @@ function applyIdVerifyCountryPrefill() {
   const prevCountry = onboardingState.selectedCountry;
   let nextCountry = prevCountry;
   let displayCountry = prevCountry;
-  let locked = false;
   if (onboardingState.selectedIdentity === 'hk') {
     nextCountry = '中国香港';
     displayCountry = '香港';
-    locked = true;
   } else if (onboardingState.selectedIdentity === 'macau') {
     nextCountry = '中国澳门';
     displayCountry = '澳门';
-    locked = true;
   } else {
     displayCountry = prevCountry;
-    locked = false;
   }
 
   const countryChanged = nextCountry !== prevCountry;
   onboardingState.selectedCountry = nextCountry;
-  onboardingState.countryLocked = locked;
   if (countryChanged) onboardingState.selectedDocument = null;
 
   display.textContent = displayCountry ? displayCountry : '请选择';
@@ -272,20 +192,16 @@ export function selectIdentity(el: HTMLElement) {
 
   if (onboardingState.selectedIdentity === 'hk') {
     onboardingState.selectedCountry = '中国香港';
-    onboardingState.countryLocked = true;
   } else if (onboardingState.selectedIdentity === 'macau') {
     onboardingState.selectedCountry = '中国澳门';
-    onboardingState.countryLocked = true;
   } else {
     onboardingState.selectedCountry = null;
-    onboardingState.countryLocked = false;
   }
 
   onboardingState.selectedDocument = null;
 }
 
 export function openModal(modalId: string) {
-  if (modalId === 'modal-country' && onboardingState.countryLocked) return;
   const modal = document.getElementById(modalId);
   if (modal) {
     modal.classList.add('active');
@@ -357,7 +273,6 @@ export function filterCountryList(ev: Event) {
 export function selectCountry(name: string, _flag?: string) {
   void _flag;
   onboardingState.selectedCountry = name;
-  onboardingState.countryLocked = false;
   const display = document.getElementById('country-display');
   if (display) {
     display.textContent = name;
@@ -660,12 +575,104 @@ function openOptionPicker(el: HTMLElement, options: string[]) {
   });
 
   overlay.classList.add('active');
+  applyTranslations();
 }
 
 function closeOptionPicker() {
   const overlay = document.getElementById('op-overlay');
   if (overlay) overlay.classList.remove('active');
   opTargetEl = null;
+}
+
+/* ===== Fund source multi-select (bottom sheet) ===== */
+const FUND_SOURCE_OPTIONS = [
+  '\u85aa\u91d1',
+  '\u516c\u53f8\u76c8\u5229',
+  '\u5bb6\u65cf\u8d44\u4ea7',
+  '\u623f\u5730\u4ea7\u6295\u8d44/\u79df\u91d1\u6536\u5165',
+  '\u80a1\u7968\u57fa\u91d1\u6295\u8d44',
+  '\u51fa\u552e\u516c\u53f8\u80a1\u6743',
+  '\u77e5\u8bc6\u4ea7\u6743\u83b7\u5229',
+  '\u5176\u4ed6',
+];
+
+let fsTargetEl: HTMLElement | null = null;
+
+function openFundSourcePicker(el: HTMLElement) {
+  fsTargetEl = el;
+  const overlay = document.getElementById('fs-overlay');
+  const body = document.getElementById('fs-body');
+  if (!overlay || !body) return;
+
+  const valueEl = el.querySelector('.field-value, .field-placeholder') as HTMLElement | null;
+  const raw = valueEl?.textContent?.trim() || '';
+  const skip =
+    raw === '\u8bf7\u9009\u62e9' || raw === '\u2014' || raw === '-' || raw === '';
+  const selected = new Set<string>();
+  if (!skip) {
+    raw.split(/[\u3001,]/).forEach((p) => {
+      const t = p.trim();
+      if (t) selected.add(t);
+    });
+  }
+
+  body.innerHTML = '';
+  FUND_SOURCE_OPTIONS.forEach((label) => {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'fs-item' + (selected.has(label) ? ' fs-selected' : '');
+    row.dataset.value = label;
+    const lab = document.createElement('span');
+    lab.className = 'fs-item-label';
+    lab.textContent = label;
+    const check = document.createElement('span');
+    check.className = 'fs-check';
+    check.setAttribute('aria-hidden', 'true');
+    row.appendChild(lab);
+    row.appendChild(check);
+    row.onclick = (e) => {
+      e.stopPropagation();
+      row.classList.toggle('fs-selected');
+    };
+    body.appendChild(row);
+  });
+
+  overlay.classList.add('active');
+  applyTranslations();
+}
+
+function closeFundSourcePicker() {
+  const overlay = document.getElementById('fs-overlay');
+  if (overlay) overlay.classList.remove('active');
+  fsTargetEl = null;
+}
+
+function confirmFundSourcePicker() {
+  if (!fsTargetEl) {
+    closeFundSourcePicker();
+    return;
+  }
+  const body = document.getElementById('fs-body');
+  const selected: string[] = [];
+  body?.querySelectorAll('.fs-item.fs-selected').forEach((node) => {
+    const v = (node as HTMLElement).dataset.value;
+    if (v) selected.push(v);
+  });
+
+  const valueEl = fsTargetEl.querySelector('.field-value, .field-placeholder') as HTMLElement | null;
+  if (valueEl) {
+    if (selected.length === 0) {
+      valueEl.textContent = '\u8bf7\u9009\u62e9';
+      valueEl.classList.remove('field-value');
+      valueEl.classList.add('field-placeholder');
+    } else {
+      valueEl.textContent = selected.join('\u3001');
+      valueEl.classList.remove('field-placeholder');
+      valueEl.classList.add('field-value');
+    }
+  }
+
+  closeFundSourcePicker();
 }
 
 export function cycleSelect(el: HTMLElement, options: string[]) {
@@ -866,74 +873,6 @@ function updateSubmitBtn() {
   }
 }
 
-export function drawDotGlobe() {
-  const canvas = document.getElementById('globeCanvas') as HTMLCanvasElement | null;
-  if (!canvas) return;
-  const dpr = window.devicePixelRatio || 2;
-  const size = 320;
-  canvas.width = size * dpr;
-  canvas.height = size * dpr;
-  canvas.style.width = size + 'px';
-  canvas.style.height = size + 'px';
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  ctx.scale(dpr, dpr);
-  const cx = size / 2;
-  const cy = size / 2;
-  const R = size * 0.44;
-  const dotR = 1.4;
-  const step = 5;
-  const rotLng = 1.5;
-  const rotLat = 0.25;
-
-  function isLand(lat: number, lng: number) {
-    if (lng > 180) lng -= 360;
-    if (lng < -180) lng += 360;
-    if (lat > 45 && lat < 75 && lng > 60 && lng < 180) return true;
-    if (lat > 20 && lat < 45 && lng > 75 && lng < 135) return true;
-    if (lat > 8 && lat < 35 && lng > 68 && lng < 90) return true;
-    if (lat > 30 && lat < 46 && lng > 126 && lng < 146) return true;
-    if (lat > -8 && lat < 20 && lng > 95 && lng < 140) return true;
-    if (lat > 12 && lat < 42 && lng > 25 && lng < 65) return true;
-    if (lat > 36 && lat < 72 && lng > -10 && lng < 55) return true;
-    if (lat > -35 && lat < 37 && lng > -18 && lng < 52) return true;
-    if (lat > 25 && lat < 72 && lng > -170 && lng < -50) return true;
-    if (lat > 7 && lat < 25 && lng > -120 && lng < -75) return true;
-    if (lat > -56 && lat < 12 && lng > -82 && lng < -34) return true;
-    if (lat > -40 && lat < -11 && lng > 112 && lng < 155) return true;
-    if (lat > 60 && lat < 84 && lng > -75 && lng < -12) return true;
-    if (lat > 50 && lat < 60 && lng > -11 && lng < 2) return true;
-    return false;
-  }
-
-  for (let lat = -85; lat <= 85; lat += step) {
-    const latRad = (lat * Math.PI) / 180;
-    let lngStep = step / Math.max(Math.cos(latRad), 0.2);
-    if (lngStep > 60) lngStep = 60;
-    for (let lng = -180; lng < 180; lng += lngStep) {
-      if (!isLand(lat, lng)) continue;
-      const lngRad = (lng * Math.PI) / 180;
-      const x = Math.cos(latRad) * Math.sin(lngRad - rotLng);
-      const y = -(
-        Math.sin(latRad) * Math.cos(rotLat) -
-        Math.cos(latRad) * Math.cos(lngRad - rotLng) * Math.sin(rotLat)
-      );
-      const z =
-        Math.sin(latRad) * Math.sin(rotLat) +
-        Math.cos(latRad) * Math.cos(lngRad - rotLng) * Math.cos(rotLat);
-      if (z > 0.02) {
-        const px = cx + x * R;
-        const py = cy + y * R;
-        const alpha = 0.12 + z * 0.3;
-        ctx.beginPath();
-        ctx.arc(px, py, dotR, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(170, 150, 120, ' + alpha + ')';
-        ctx.fill();
-      }
-    }
-  }
-}
-
 let globalsInstalled = false;
 
 export function installOnboardingGlobals(navigate: NavigateFunction) {
@@ -970,6 +909,9 @@ export function installOnboardingGlobals(navigate: NavigateFunction) {
   w.confirmDatePicker = confirmDatePicker;
   w.openOptionPicker = openOptionPicker;
   w.closeOptionPicker = closeOptionPicker;
+  w.openFundSourcePicker = openFundSourcePicker;
+  w.closeFundSourcePicker = closeFundSourcePicker;
+  w.confirmFundSourcePicker = confirmFundSourcePicker;
   w.clearSignature = clearSignature;
   w.toggleSigAgree = toggleSigAgree;
 
@@ -982,5 +924,4 @@ export function installOnboardingGlobals(navigate: NavigateFunction) {
 
 export function bootstrapLegacyUi() {
   initLanguage();
-  drawDotGlobe();
 }

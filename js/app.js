@@ -3,7 +3,6 @@ const state = {
   selectedIdentity: 'other',
   selectedCountry: null,
   selectedDocument: null,
-  countryLocked: false,
   taxHasNumber: true,
   lang: 'zh-Hans',
   signatureAgreed: false,
@@ -187,25 +186,20 @@ function applyIdVerifyCountryPrefill() {
   const prevCountry = state.selectedCountry;
   let nextCountry = prevCountry;
   let displayCountry = prevCountry;
-  let locked = false;
   if (state.selectedIdentity === 'hk') {
     nextCountry = '中国香港';
     displayCountry = '香港';
-    locked = true;
   } else if (state.selectedIdentity === 'macau') {
     nextCountry = '中国澳门';
     displayCountry = '澳门';
-    locked = true;
   } else {
     // For "other", keep any previously selected country (if user already picked it)
     displayCountry = prevCountry;
-    locked = false;
   }
 
   // If derived country changed, clear doc selection/UI to avoid stale docs.
   const countryChanged = nextCountry !== prevCountry;
   state.selectedCountry = nextCountry;
-  state.countryLocked = locked;
   if (countryChanged) state.selectedDocument = null;
 
   display.textContent = displayCountry ? displayCountry : '请选择';
@@ -287,13 +281,10 @@ function selectIdentity(el) {
   // (UI will be applied when goToPage('page-id-verify') runs.)
   if (state.selectedIdentity === 'hk') {
     state.selectedCountry = '中国香港';
-    state.countryLocked = true;
   } else if (state.selectedIdentity === 'macau') {
     state.selectedCountry = '中国澳门';
-    state.countryLocked = true;
   } else {
     state.selectedCountry = null;
-    state.countryLocked = false;
   }
 
   // Clear doc selection whenever identity changes
@@ -302,8 +293,6 @@ function selectIdentity(el) {
 
 /* ===== Modal Management ===== */
 function openModal(modalId) {
-  // If country is locked (hk/macau), prevent manual re-selection.
-  if (modalId === 'modal-country' && state.countryLocked) return;
   const modal = document.getElementById(modalId);
   if (modal) modal.classList.add('active');
 }
@@ -322,7 +311,6 @@ function closeModalOnOverlay(event) {
 /* ===== Country Selection ===== */
 function selectCountry(name) {
   state.selectedCountry = name;
-  state.countryLocked = false;
   const display = document.getElementById('country-display');
   display.textContent = name;
   display.classList.remove('field-placeholder');
