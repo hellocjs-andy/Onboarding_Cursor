@@ -574,6 +574,48 @@ function confirmDatePicker() {
   closeDatePicker();
 }
 
+/* ===== Option Picker ===== */
+let opTargetEl: HTMLElement | null = null;
+
+function openOptionPicker(el: HTMLElement, options: string[]) {
+  opTargetEl = el;
+  const overlay = document.getElementById('op-overlay');
+  const body = document.getElementById('op-body');
+  const titleEl = document.getElementById('op-title');
+  if (!overlay || !body) return;
+
+  const labelEl = el.querySelector('.field-label') as HTMLElement | null;
+  if (titleEl) titleEl.textContent = labelEl?.textContent || '';
+
+  const valueEl = el.querySelector('.field-value, .field-placeholder') as HTMLElement | null;
+  const currentVal = valueEl?.textContent?.trim() || '';
+
+  body.innerHTML = '';
+  options.forEach((opt) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'op-item' + (opt === currentVal ? ' op-selected' : '');
+    btn.textContent = opt;
+    btn.onclick = () => {
+      if (valueEl) {
+        valueEl.textContent = opt;
+        valueEl.classList.remove('field-placeholder');
+        valueEl.classList.add('field-value');
+      }
+      closeOptionPicker();
+    };
+    body.appendChild(btn);
+  });
+
+  overlay.classList.add('active');
+}
+
+function closeOptionPicker() {
+  const overlay = document.getElementById('op-overlay');
+  if (overlay) overlay.classList.remove('active');
+  opTargetEl = null;
+}
+
 export function cycleSelect(el: HTMLElement, options: string[]) {
   const valueEl = el.querySelector('.field-value, .field-placeholder');
   if (!valueEl) return;
@@ -871,6 +913,8 @@ export function installOnboardingGlobals(navigate: NavigateFunction) {
   w.openDatePicker = openDatePicker;
   w.closeDatePicker = closeDatePicker;
   w.confirmDatePicker = confirmDatePicker;
+  w.openOptionPicker = openOptionPicker;
+  w.closeOptionPicker = closeOptionPicker;
   w.clearSignature = clearSignature;
   w.toggleSigAgree = toggleSigAgree;
 

@@ -2635,6 +2635,8 @@ body.signature-force-landscape {
 
 .dp-sheet {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: #fff;
   border-radius: 14px 14px 0 0;
   overflow: hidden;
@@ -2725,4 +2727,76 @@ body.signature-force-landscape {
 .dp-item.dp-selected {
   font-weight: 600;
   color: #000;
+}
+
+/* ===== Option Picker ===== */
+.op-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0,0,0,0.4);
+  align-items: flex-end;
+  justify-content: center;
+}
+.op-overlay.active {
+  display: flex;
+}
+.op-sheet {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 14px 14px 0 0;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.op-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.op-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+.op-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #999;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.op-body {
+  padding: 8px 0;
+}
+.op-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  font-size: 16px;
+  color: #333;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+.op-item:active {
+  background: #f5f5f5;
+}
+.op-item.op-selected {
+  color: #e8a040;
+  font-weight: 600;
+}
+.op-item.op-selected::after {
+  content: '\2713';
+  color: #e8a040;
+  font-size: 16px;
+  font-weight: 600;
 }
