@@ -463,6 +463,117 @@ export function selectRadio(el: HTMLElement) {
   el.classList.add('selected');
 }
 
+/* ===== Date Picker ===== */
+let dpTargetEl: HTMLElement | null = null;
+let dpTitle = '';
+const ITEM_H = 40;
+const VISIBLE_COUNT = 5;
+const PAD_COUNT = Math.floor(VISIBLE_COUNT / 2);
+
+function populateColumn(colId: string, items: string[], selected: number) {
+  const col = document.getElementById(colId);
+  if (!col) return;
+  col.innerHTML = '';
+  for (let i = 0; i < PAD_COUNT; i++) {
+    const pad = document.createElement('div');
+    pad.className = 'dp-item dp-pad';
+    col.appendChild(pad);
+  }
+  items.forEach((text, i) => {
+    const div = document.createElement('div');
+    div.className = 'dp-item';
+    div.textContent = text;
+    div.dataset.idx = String(i);
+    col.appendChild(div);
+  });
+  for (let i = 0; i < PAD_COUNT; i++) {
+    const pad = document.createElement('div');
+    pad.className = 'dp-item dp-pad';
+    col.appendChild(pad);
+  }
+  col.scrollTop = selected * ITEM_H;
+}
+
+function getSelectedIndex(colId: string): number {
+  const col = document.getElementById(colId);
+  if (!col) return 0;
+  return Math.round(col.scrollTop / ITEM_H);
+}
+
+function getDaysInMonth(year: number, month: number): number {
+  return new Date(year, month, 0).getDate();
+}
+
+function openDatePicker(el: HTMLElement, title: string) {
+  dpTargetEl = el;
+  dpTitle = title;
+  const overlay = document.getElementById('dp-overlay');
+  if (!overlay) return;
+
+  const titleEl = overlay.querySelector('.dp-title');
+  if (titleEl) titleEl.textContent = title;
+
+  const valueEl = el.querySelector('.field-value') as HTMLElement | null;
+  const current = valueEl?.textContent?.trim() || '';
+  let year = 1990, month = 1, day = 1;
+  const match = current.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (match) {
+    year = parseInt(match[1]);
+    month = parseInt(match[2]);
+    day = parseInt(match[3]);
+  }
+
+  const curYear = new Date().getFullYear();
+  const years: string[] = [];
+  for (let y = curYear + 10; y >= 1940; y--) years.push(y + '\u5e74');
+  const months: string[] = [];
+  for (let m = 1; m <= 12; m++) months.push(m + '\u6708');
+  const maxDay = getDaysInMonth(year, month);
+  const days: string[] = [];
+  for (let d = 1; d <= maxDay; d++) days.push(d + '\u65e5');
+
+  const yearIdx = years.indexOf(year + '\u5e74');
+  populateColumn('dp-col-year', years, yearIdx >= 0 ? yearIdx : 0);
+  populateColumn('dp-col-month', months, month - 1);
+  populateColumn('dp-col-day', days, Math.min(day, maxDay) - 1);
+
+  overlay.classList.add('active');
+}
+
+function closeDatePicker() {
+  const overlay = document.getElementById('dp-overlay');
+  if (overlay) overlay.classList.remove('active');
+  dpTargetEl = null;
+}
+
+function confirmDatePicker() {
+  if (!dpTargetEl) { closeDatePicker(); return; }
+
+  const yearCol = document.getElementById('dp-col-year');
+  const monthCol = document.getElementById('dp-col-month');
+  const dayCol = document.getElementById('dp-col-day');
+  if (!yearCol || !monthCol || !dayCol) { closeDatePicker(); return; }
+
+  const yIdx = getSelectedIndex('dp-col-year');
+  const mIdx = getSelectedIndex('dp-col-month');
+  const dIdx = getSelectedIndex('dp-col-day');
+
+  const yItem = yearCol.querySelectorAll('.dp-item:not(.dp-pad)')[yIdx] as HTMLElement | undefined;
+  const mItem = monthCol.querySelectorAll('.dp-item:not(.dp-pad)')[mIdx] as HTMLElement | undefined;
+  const dItem = dayCol.querySelectorAll('.dp-item:not(.dp-pad)')[dIdx] as HTMLElement | undefined;
+
+  if (yItem && mItem && dItem) {
+    const y = parseInt(yItem.textContent || '1990');
+    const m = parseInt(mItem.textContent || '1');
+    const d = parseInt(dItem.textContent || '1');
+    const formatted = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const valueEl = dpTargetEl.querySelector('.field-value') as HTMLElement | null;
+    if (valueEl) valueEl.textContent = formatted;
+  }
+
+  closeDatePicker();
+}
+
 export function cycleSelect(el: HTMLElement, options: string[]) {
   const valueEl = el.querySelector('.field-value, .field-placeholder');
   if (!valueEl) return;
@@ -757,6 +868,9 @@ export function installOnboardingGlobals(navigate: NavigateFunction) {
   w.toggleCheckboxCard = toggleCheckboxCard;
   w.selectRadio = selectRadio;
   w.cycleSelect = cycleSelect;
+  w.openDatePicker = openDatePicker;
+  w.closeDatePicker = closeDatePicker;
+  w.confirmDatePicker = confirmDatePicker;
   w.clearSignature = clearSignature;
   w.toggleSigAgree = toggleSigAgree;
 

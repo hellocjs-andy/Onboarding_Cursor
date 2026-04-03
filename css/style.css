@@ -2618,3 +2618,111 @@ body.signature-force-landscape {
     padding-top: 12px;
   }
 }
+
+/* ===== Date Picker (wheel style) ===== */
+.dp-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: rgba(0,0,0,0.4);
+  align-items: flex-end;
+  justify-content: center;
+}
+.dp-overlay.active {
+  display: flex;
+}
+
+.dp-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 14px 14px 0 0;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.dp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.dp-cancel,
+.dp-confirm {
+  background: none;
+  border: none;
+  font-size: 16px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.dp-cancel { color: #999; }
+.dp-confirm { color: #e8a040; font-weight: 600; }
+.dp-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.dp-body {
+  position: relative;
+  display: flex;
+  height: 220px;
+  overflow: hidden;
+}
+
+.dp-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 40px;
+  transform: translateY(-50%);
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dp-mask-top,
+.dp-mask-bottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 90px;
+  pointer-events: none;
+  z-index: 1;
+}
+.dp-mask-top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.92), rgba(255,255,255,0.5));
+}
+.dp-mask-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(255,255,255,0.92), rgba(255,255,255,0.5));
+}
+
+.dp-col {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+.dp-col::-webkit-scrollbar { display: none; }
+
+.dp-item {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #333;
+  scroll-snap-align: center;
+  user-select: none;
+  transition: color 0.15s, font-weight 0.15s;
+}
+.dp-item.dp-selected {
+  font-weight: 600;
+  color: #000;
+}
