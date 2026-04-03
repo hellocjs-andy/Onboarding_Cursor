@@ -2813,12 +2813,26 @@ body.signature-force-landscape {
   overflow: hidden;
 }
 .bottom-sheet,
-.dp-sheet,
-.op-sheet,
 .noya-sheet,
 .bank-picker-sheet {
   max-width: 100vw;
   box-sizing: border-box;
+}
+
+/* dp/op sheets: stay within parent; avoid 100vw so desktop cap below can apply */
+.dp-sheet,
+.op-sheet {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .dp-sheet,
+  .op-sheet {
+    flex: 0 1 auto;
+    width: min(100%, 390px);
+    max-width: 390px;
+  }
 }
 
 /* ===== Bank picker (HK bank list) ===== */
