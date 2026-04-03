@@ -62,6 +62,7 @@ export const I18N: Record<string, Dict> = {
     '持有澳门永久/非永久居民身份证': '持有澳門永久/非永久居民身份證',
     '其他国家/地区': '其他國家/地區',
     '证件签发国家/地区': '證件簽發國家/地區',
+    '请输入银行名称/银行代码': '請輸入銀行名稱/銀行代碼',
 
     // ── ID Verify ──
     身份信息验证: '身份資訊驗證',
@@ -322,6 +323,7 @@ export const I18N: Record<string, Dict> = {
     '持有澳门永久/非永久居民身份证': 'Macau permanent/non-permanent ID card holder',
     '其他国家/地区': 'Other Countries/Regions',
     '证件签发国家/地区': 'Issuing Country / Region',
+    '请输入银行名称/银行代码': 'Enter bank name / bank code',
 
     // ── ID Verify ──
     身份信息验证: 'Identity Verification',

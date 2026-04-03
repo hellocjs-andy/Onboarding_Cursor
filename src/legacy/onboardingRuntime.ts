@@ -298,6 +298,15 @@ export function openModal(modalId: string) {
         });
       }
     }
+    if (modalId === 'modal-bank') {
+      const inp = document.getElementById('bank-search-input') as HTMLInputElement | null;
+      if (inp) {
+        inp.value = '';
+        document.querySelectorAll('#bank-list .bank-pick-row').forEach((el) => {
+          (el as HTMLElement).style.display = '';
+        });
+      }
+    }
   }
 }
 
@@ -311,6 +320,27 @@ export function closeModalOnOverlay(event: MouseEvent) {
   if (t.classList.contains('modal-overlay')) {
     t.classList.remove('active');
   }
+}
+
+export function filterBankList(ev: Event) {
+  const input = ev.target as HTMLInputElement;
+  const q = (input.value || '').trim().toLowerCase();
+  const list = document.getElementById('bank-list');
+  if (!list) return;
+  list.querySelectorAll('.bank-pick-row').forEach((el) => {
+    const text = (el.textContent || '').toLowerCase();
+    (el as HTMLElement).style.display = !q || text.includes(q) ? '' : 'none';
+  });
+}
+
+export function selectBank(displayText: string) {
+  const el = document.getElementById('bank-name-display');
+  if (el) {
+    el.textContent = displayText;
+    el.classList.remove('field-placeholder');
+    el.classList.add('field-value');
+  }
+  closeModal('modal-bank');
 }
 
 export function filterCountryList(ev: Event) {
@@ -922,6 +952,8 @@ export function installOnboardingGlobals(navigate: NavigateFunction) {
   w.closeModalOnOverlay = closeModalOnOverlay;
   w.selectCountry = selectCountry;
   w.filterCountryList = filterCountryList;
+  w.filterBankList = filterBankList;
+  w.selectBank = selectBank;
   w.toggleTaxNumber = toggleTaxNumber;
   w.openDocumentSelector = openDocumentSelector;
   w.selectDocument = selectDocument;

@@ -2807,14 +2807,103 @@ body.signature-force-landscape {
 .modal-overlay,
 .dp-overlay,
 .op-overlay,
-.noya-sheet-overlay {
+.noya-sheet-overlay,
+.bank-picker-overlay {
   max-width: 100vw;
   overflow: hidden;
 }
 .bottom-sheet,
 .dp-sheet,
 .op-sheet,
-.noya-sheet {
+.noya-sheet,
+.bank-picker-sheet {
   max-width: 100vw;
   box-sizing: border-box;
+}
+
+/* ===== Bank picker (HK bank list) ===== */
+.bank-picker-overlay {
+  align-items: flex-end;
+  justify-content: center;
+}
+.bank-picker-sheet {
+  max-height: min(88vh, 720px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.bank-picker-header h3 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.bank-picker-body {
+  padding: 0;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.bank-picker-body .bottom-sheet-search {
+  flex-shrink: 0;
+}
+.bank-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+.bank-pick-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  background: var(--white, #fff);
+}
+.bank-pick-row:active {
+  background: #f7f7f7;
+}
+.bank-pick-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #e8a040 0%, #c98930 100%);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.bank-pick-main {
+  flex: 1;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+.bank-pick-text {
+  font-size: 15px;
+  color: #222;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bank-edda-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #e8a040;
+  border: 1px solid rgba(232, 160, 64, 0.85);
+  border-radius: 4px;
+  padding: 2px 7px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.bank-edda-placeholder {
+  width: 44px;
+  flex-shrink: 0;
 }
